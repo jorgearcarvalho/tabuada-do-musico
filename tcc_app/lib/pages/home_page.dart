@@ -20,7 +20,21 @@ class HomePage extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushNamed(context, '/intervalos');
                 },
-                child: const Text('Intervalos'))
+                child: const Text('Intervalos')),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/tetrades');
+              },
+              child: const Text('Formação de acordes: Tétrades'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/harmonia');
+              },
+              child: const Text('Progressões Harmônicas'),
+            )
           ],
         )));
   }

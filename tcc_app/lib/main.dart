@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tcc_app/pages/progressoes_page.dart';
+import 'package:tcc_app/pages/tetrades_page.dart';
 import './pages/home_page.dart';
 import './pages/intervalos_page.dart';
 
@@ -23,6 +25,8 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (context) => const HomePage(),
           '/intervalos': (context) => IntervalosPage(),
+          '/tetrades': (context) => TetradesPage(),
+          '/harmonia': (context) => ExercicioHarmonia(),
         });
   }
 }

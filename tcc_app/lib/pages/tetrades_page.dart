@@ -1,6 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:math';
+import '../models/acordes.dart';
 
 class TetradesPage extends StatefulWidget {
   @override
@@ -8,25 +10,6 @@ class TetradesPage extends StatefulWidget {
 }
 
 class _TetradesPageState extends State<TetradesPage> {
-  final List<Map<String, dynamic>> acordes = [
-    {
-      'nome': 'Cmaj7',
-      'notas': ['C', 'E', 'G', 'B']
-    },
-    {
-      'nome': 'Dm7',
-      'notas': ['D', 'F', 'A', 'C']
-    },
-    {
-      'nome': 'G7',
-      'notas': ['G', 'B', 'D', 'F']
-    },
-    {
-      'nome': 'Am7',
-      'notas': ['A', 'C', 'E', 'G']
-    },
-  ];
-
   late Map<String, dynamic> acordeAtual;
   List<String> selecaoUsuario = [];
   int acertos = 0;
@@ -41,9 +24,35 @@ class _TetradesPageState extends State<TetradesPage> {
     iniciarTimer();
   }
 
+  // Função para gerar acordes aleatórios
+  List<Map<String, dynamic>> gerarAcordesAleatorios() {
+    Random random = Random();
+    List<Map<String, dynamic>> acordes = [];
+
+    List<String> tiposDeAcordes = Acorde.formulas.keys.toList();
+    List<String> notas = Acorde.escalaCromatica;
+
+    for (int i = 0; i < 5; i++) {
+      String fundamental = notas[random.nextInt(notas.length)];
+      String tipo = tiposDeAcordes[random.nextInt(tiposDeAcordes.length)];
+
+      Acorde acorde = Acorde(fundamental, tipo);
+
+      acordes.add({
+        'nome': acorde.toString(),
+        'notas': acorde.notas,
+      });
+    }
+
+    return acordes;
+  }
+
   void iniciarNovoExercicio() {
     setState(() {
-      acordeAtual = (acordes..shuffle()).first;
+      // Sorteia novos acordes
+      List<Map<String, dynamic>> acordesSorteados = gerarAcordesAleatorios();
+      acordeAtual =
+          acordesSorteados.first; // Pega o primeiro acorde para o exercício
       selecaoUsuario.clear();
     });
   }
@@ -84,6 +93,9 @@ class _TetradesPageState extends State<TetradesPage> {
               Navigator.pop(context);
               iniciarNovoExercicio();
               iniciarTimer();
+              acertos = 0;
+              tentativas = 0;
+              tempoRestante = 30;
             },
             child: Text('Tentar novamente'),
           ),
@@ -101,44 +113,61 @@ class _TetradesPageState extends State<TetradesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Exercício de Tétrades')),
-      body: Center(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('Identifique as notas do acorde: ${acordeAtual['nome']}',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          SizedBox(height: 15),
-          Wrap(
-            spacing: 10,
-            children: ['C', 'D', 'E', 'F', 'G', 'A', 'B']
-                .map((nota) => ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          if (selecaoUsuario.contains(nota)) {
-                            selecaoUsuario.remove(nota);
-                          } else if (selecaoUsuario.length < 4) {
-                            selecaoUsuario.add(nota);
-                          }
-                        });
-                      },
-                      child: Text(nota),
-                      style: ElevatedButton.styleFrom(
+      appBar: AppBar(title: Text('Formação de Acordes')),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          double larguraDisponivel = constraints.maxWidth;
+          double alturaDisponivel = constraints.maxHeight;
+
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Identifique as notas do acorde: ${acordeAtual['nome']}',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 15),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: Acorde.escalaCromatica.map((nota) {
+                    return SizedBox(
+                      width: larguraDisponivel * 0.1, // Ajuste proporcional
+                      height: alturaDisponivel * 0.07, // Ajuste proporcional
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            if (selecaoUsuario.contains(nota)) {
+                              selecaoUsuario.remove(nota);
+                            } else if (selecaoUsuario.length < 4) {
+                              selecaoUsuario.add(nota);
+                            }
+                          });
+                        },
+                        child: Text(nota),
+                        style: ElevatedButton.styleFrom(
                           backgroundColor: selecaoUsuario.contains(nota)
                               ? Colors.green
-                              : const Color.fromARGB(255, 100, 185, 255)),
-                    ))
-                .toList(),
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: verificarResposta,
-            child: Text('Verificar Resposta'),
-          ),
-          SizedBox(height: 20),
-          Text('Tempo restante: $tempoRestante segundos'),
-        ],
-      )),
+                              : const Color.fromARGB(255, 100, 185, 255),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: verificarResposta,
+                  child: Text('Verificar Resposta'),
+                ),
+                SizedBox(height: 20),
+                Text('Tempo restante: $tempoRestante segundos'),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

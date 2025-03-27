@@ -15,3 +15,5 @@ O aplicativo pretende fornecer uma ferramenta de estudos para auxiliar músicos 
 - Jorge Augusto Rocha de Carvalho, 2022130009
 - Mateus Silva Araújo, 2112130043
 
+#### Sob orientação de
+- Daniel

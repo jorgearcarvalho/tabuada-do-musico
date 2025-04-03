@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
           '/intervalos': (context) => IntervalosPage(),
           '/acordes': (context) => AcordesPage(),
           '/escalas': (context) => EscalasPage(), // implementar
-          '/harmonia': (context) => const ExercicioHarmonia(), // implementar
+          '/harmonia': (context) => CampoHarmonicoPage(), // implementar
           '/creditos': (context) => const CreditosPage()
         });
   }

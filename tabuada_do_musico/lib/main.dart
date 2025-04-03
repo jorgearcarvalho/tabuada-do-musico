@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tcc_app/pages/creditos_page.dart';
-import 'package:tcc_app/pages/menu/menu_inicial_page.dart';
+import 'package:tcc_app/pages/menu/menu_pages.dart';
 import 'pages/home_page.dart';
-import 'package:tcc_app/pages/menu/menu_principal_page.dart';
 import 'pages/menu/exercicios/intervalos_page.dart';
 import 'package:tcc_app/pages/menu/exercicios/acordes_page.dart';
 import 'package:tcc_app/pages/menu/exercicios/escalas_page.dart';
@@ -27,12 +26,11 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => const HomePage(),
-          '/menuInicial': (context) => MenuInicialPage(),
-          '/menuPrincipal': (context) => const MenuPrincipalPage(),
+          '/menuInicial': (context) => MenuPages(),
           '/intervalos': (context) => IntervalosPage(),
           '/acordes': (context) => AcordesPage(),
           '/escalas': (context) => EscalasPage(), // implementar
-          '/harmonia': (context) => CampoHarmonicoPage(), // implementar
+          '/harmonia': (context) => CampoHarmonicoPage(), // testar
           '/creditos': (context) => const CreditosPage()
         });
   }

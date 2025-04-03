@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tcc_app/pages/menu/menu_inicial_page.dart';
+import 'package:tcc_app/pages/menu/menu_pages.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MenuInicialPage()),
+                  MaterialPageRoute(builder: (context) => MenuPages()),
                 );
               },
               child: const Text(

@@ -1,58 +1,57 @@
+import 'package:tcc_app/database/tonalidades.dart';
+
 class Acorde {
   final String fundamental;
   final String tipo;
 
-  static const List<String> escalaCromatica = [
-    'C',
-    'C#',
-    'D',
-    'D#',
-    'E',
-    'F',
-    'F#',
-    'G',
-    'G#',
-    'A',
-    'A#',
-    'B'
-  ];
-
-  static const Map<String, List<int>> triades = {
-    'Aaior': [0, 4, 7],
-    'menor': [0, 3, 7],
-    'Aum': [0, 4, 8],
-    'dim': [0, 3, 6],
-    'sus4': [0, 5, 7],
+  static const Map<String, List<String>> triades = {
+    'Maior': ['1J', '3M', '5J'],
+    'menor': ['1J', '3m', '5J'],
+    'Aum': ['1J', '3M', '6m'], // 6m pra facilitar (implementar 5A)
+    'dim': ['1J', '3m', '5d'],
+    'sus4': ['1J', '4J', '5J']
   };
 
-  static const Map<String, List<int>> tetrades = {
-    'maj7': [0, 4, 7, 11],
-    '7': [0, 4, 7, 10],
-    'min7': [0, 3, 7, 10],
-    'm7b5': [0, 3, 6, 10],
-    'dim7': [0, 3, 6, 9],
+  static const Map<String, List<String>> tetrades = {
+    '7M': ['1J', '3M', '5J', '7M'], // maior com 7M: 1, 3M, 5J, 7M
+    '7': ['1J', '3M', '5J', '7m'], // dominante: 1, 3M, 5J, 7m
+    'min7': ['1J', '3m', '5J', '7m'], // menor com 7m: 1, 3m, 5J, 7m
+    'm7b5': ['1J', '3m', '5d', '7m'], // meio diminuto: 1, 3m, b5, 7m
+    'dim': ['1J', '3m', '5d', '6M'], // diminuto: 1, 3m, b5, 7d (ou 7bb) (6M)
+    // Implementar 7d
   };
 
-  static Map<String, List<int>> get formulas => {
+  static Map<String, List<String>> get formulas => {
         ...triades,
         ...tetrades,
       };
 
   Acorde(this.fundamental, this.tipo);
 
-  List<String> get notas {
-    final rootIndex = escalaCromatica.indexOf(fundamental);
-    if (rootIndex == -1)
-      throw Exception('Nota fundamental inválida: $fundamental');
-    final intervals = formulas[tipo];
-    if (intervals == null)
-      throw Exception('Tipo de acorde desconhecido: $tipo');
+  List<Map<String, String>> mapearNotas(String fundamental) {
+    final intervalos = formulas[tipo];
+    print(intervalos);
 
-    return intervals.map((i) {
-      return escalaCromatica[(rootIndex + i) % 12];
+    if (intervalos == null) {
+      throw Exception('Tipo de acorde desconhecido: $tipo');
+    }
+
+    final mapaDaTonalidade = tonalidades[fundamental];
+
+    final intervalosMapeados = intervalos.map((intervalo) {
+      final nota = mapaDaTonalidade?[intervalo];
+      if (nota == null) {
+        throw Exception('Intervalo desconhecido: $intervalo');
+      }
+
+      return {intervalo: nota};
     }).toList();
+
+    print(intervalosMapeados);
+
+    return intervalosMapeados;
   }
 
   @override
-  String toString() => '$fundamental$tipo (${notas.join(', ')})';
+  String toString() => '$fundamental$tipo';
 }

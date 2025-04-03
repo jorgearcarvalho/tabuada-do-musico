@@ -23,7 +23,7 @@ class MenuPrincipalPage extends StatelessWidget {
             const SizedBox(height: 30),
             ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/tetrades');
+                  Navigator.pushNamed(context, '/acordes');
                 },
                 child: const Text('Formação de acordes',
                     style: TextStyle(fontSize: 20))),

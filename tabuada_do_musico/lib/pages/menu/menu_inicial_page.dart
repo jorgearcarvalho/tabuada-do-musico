@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class MenuInicialPage extends StatelessWidget {
+  const MenuInicialPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,10 +20,9 @@ class MenuInicialPage extends StatelessWidget {
               onPressed: () {
                 Navigator.pushNamed(context, '/menuPrincipal');
               },
-              child:
-                  const Text('Vamos estudar', style: TextStyle(fontSize: 20)),
+              child: const Text('Módulo I', style: TextStyle(fontSize: 20)),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 30),
             ElevatedButton(
               style: ElevatedButton.styleFrom(minimumSize: const Size(50, 50)),
               onPressed: () {

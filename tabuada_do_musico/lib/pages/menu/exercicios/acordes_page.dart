@@ -1,15 +1,16 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:tcc_app/database/tonalidades.dart';
 import 'dart:async';
 import 'dart:math';
 import '../../../models/acordes.dart';
 
-class TetradesPage extends StatefulWidget {
+class AcordesPage extends StatefulWidget {
   @override
-  _TetradesPageState createState() => _TetradesPageState();
+  _AcordesPageState createState() => _AcordesPageState();
 }
 
-class _TetradesPageState extends State<TetradesPage> {
+class _AcordesPageState extends State<AcordesPage> {
   late Map<String, dynamic> acordeAtual;
   List<String> selecaoUsuario = [];
   int acertos = 0;
@@ -29,18 +30,22 @@ class _TetradesPageState extends State<TetradesPage> {
     Random random = Random();
     List<Map<String, dynamic>> acordes = [];
 
+    List<String> tonalidadesPossiveis = tonalidades.keys.toList();
+
     List<String> tiposDeAcordes = Acorde.formulas.keys.toList();
-    List<String> notas = Acorde.escalaCromatica;
 
     for (int i = 0; i < 10; i++) {
-      String fundamental = notas[random.nextInt(notas.length)];
+      String fundamental =
+          tonalidadesPossiveis[random.nextInt(tonalidades.length)];
       String tipo = tiposDeAcordes[random.nextInt(tiposDeAcordes.length)];
 
       Acorde acorde = Acorde(fundamental, tipo);
 
+      print(acorde);
+
       acordes.add({
         'nome': acorde.toString(),
-        'notas': acorde.notas,
+        'notas': acorde.mapearNotas(fundamental),
       });
     }
 
@@ -132,7 +137,7 @@ class _TetradesPageState extends State<TetradesPage> {
                   alignment: WrapAlignment.center,
                   spacing: 10,
                   runSpacing: 10,
-                  children: Acorde.escalaCromatica.map((nota) {
+                  children: tonalidades.keys.map((nota) {
                     return SizedBox(
                       width: larguraDisponivel * 0.1, // Ajuste proporcional
                       height: alturaDisponivel * 0.07, // Ajuste proporcional

@@ -1,6 +1,4 @@
-import '../../../database/tonalidades/bemois.dart';
-import '../../../database/tonalidades/naturais.dart';
-import '../../../database/tonalidades/sustenidos.dart';
+import '../../../database/tonalidades.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
@@ -111,14 +109,14 @@ class _IntervalosPageState extends State<IntervalosPage> {
 
   void _gerarQuestao() {
     notaAtual =
-        notasNaturais.keys.elementAt(Random().nextInt(notasNaturais.length));
+        tonalidades.keys.elementAt(Random().nextInt(tonalidades.length));
 
     while (notasSorteadas.contains(notaAtual)) {
       notaAtual =
-          notasNaturais.keys.elementAt(Random().nextInt(notasNaturais.length));
+          tonalidades.keys.elementAt(Random().nextInt(tonalidades.length));
     }
 
-    final intervalosPorNota = notasNaturais[notaAtual]!;
+    final intervalosPorNota = tonalidades[notaAtual]!;
     intervaloAtual = intervaloSelecionado;
     respostaCorreta = intervalosPorNota[intervaloAtual]!;
     notasSorteadas.add(notaAtual);
@@ -128,6 +126,7 @@ class _IntervalosPageState extends State<IntervalosPage> {
 
   void _selecionaNota(String notaMusical) {
     setState(() {
+      acidenteEscolhido = ''; // Limpa o acidente
       notaEscolhida = notaMusical;
     });
   }
@@ -156,9 +155,9 @@ class _IntervalosPageState extends State<IntervalosPage> {
         _stopContador();
         _onComplete();
       } else {
-        _gerarQuestao();
         notaEscolhida = ''; // Limpa a nota escolhida
         acidenteEscolhido = ''; // Limpa o acidente escolhido
+        _gerarQuestao();
       }
     });
   }

@@ -8,6 +8,9 @@ class EscalasPage extends StatefulWidget {
 class _EscalasPageState extends State<EscalasPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Text('Página de Escalas'));
+    return Scaffold(
+        appBar: AppBar(
+      title: Text('Formação de Escalas'),
+    ));
   }
 }

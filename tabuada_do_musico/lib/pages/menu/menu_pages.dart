@@ -22,7 +22,8 @@ class _MenuPages extends State<MenuPages> {
       children: [
         ElevatedButton(
           onPressed: _toggleMenu, // Switch to secondary menu
-          child: const Text('Módulo I', style: TextStyle(fontSize: 20)),
+          child: const Text('Módulo I - Formação básica',
+              style: TextStyle(fontSize: 20)),
         ),
         const SizedBox(height: 30),
         ElevatedButton(
@@ -45,19 +46,23 @@ class _MenuPages extends State<MenuPages> {
         ElevatedButton(
           onPressed: () => Navigator.pushNamed(context, '/acordes'),
           child:
-              const Text('Formação de acordes', style: TextStyle(fontSize: 20)),
+              const Text('Formação de Acordes', style: TextStyle(fontSize: 20)),
+        ),
+        const SizedBox(height: 30),
+        ElevatedButton(
+          onPressed: () => Navigator.pushNamed(context, '/escalas'),
+          child:
+              const Text('Formação de Escalas', style: TextStyle(fontSize: 20)),
         ),
         const SizedBox(height: 30),
         ElevatedButton(
           onPressed: () => Navigator.pushNamed(context, '/harmonia'),
-          child:
-              const Text('Funções Harmônicas', style: TextStyle(fontSize: 20)),
+          child: const Text('Campo Harmônico', style: TextStyle(fontSize: 20)),
         ),
-        const SizedBox(height: 30),
+        const SizedBox(height: 60),
         ElevatedButton(
           onPressed: _toggleMenu, // Return to main menu
-          child: const Text('Retornar ao Menu Inicial',
-              style: TextStyle(fontSize: 20)),
+          child: const Text('menu inicial', style: TextStyle(fontSize: 20)),
         ),
       ],
     );

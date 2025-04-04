@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => const HomePage(),
-          '/menuInicial': (context) => MenuPages(),
+          '/menu': (context) => MenuPages(),
           '/intervalos': (context) => IntervalosPage(),
           '/acordes': (context) => AcordesPage(),
           '/escalas': (context) => EscalasPage(), // implementar

@@ -1,4 +1,6 @@
-import '../../../database/tonalidades.dart';
+import 'package:tcc_app/database/tonalidades/bemois.dart';
+import 'package:tcc_app/database/tonalidades/sustenidos.dart';
+import '../../../database/tonalidades/naturais.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
@@ -9,6 +11,7 @@ class IntervalosPage extends StatefulWidget {
 }
 
 class _IntervalosPageState extends State<IntervalosPage> {
+  int contadorIntervalosSorteados = 0;
   String notaAtual = '';
   List<String> notasSorteadas = [];
   String intervaloAtual = '';
@@ -105,18 +108,25 @@ class _IntervalosPageState extends State<IntervalosPage> {
     );
   }
 
-// Refatorar metodo para que ele possa sortear 5 de cada
-
   void _gerarQuestao() {
+    contadorIntervalosSorteados++;
+    Map<String, Map<String, String>> auxAcidentes = notasNaturais;
+
+    if (contadorIntervalosSorteados >= 6 && contadorIntervalosSorteados < 12) {
+      auxAcidentes = notasBemois;
+    } else if (contadorIntervalosSorteados >= 12) {
+      auxAcidentes = notasSustenidas;
+    }
+
     notaAtual =
-        tonalidades.keys.elementAt(Random().nextInt(tonalidades.length));
+        auxAcidentes.keys.elementAt(Random().nextInt(auxAcidentes.length));
 
     while (notasSorteadas.contains(notaAtual)) {
       notaAtual =
-          tonalidades.keys.elementAt(Random().nextInt(tonalidades.length));
+          auxAcidentes.keys.elementAt(Random().nextInt(auxAcidentes.length));
     }
 
-    final intervalosPorNota = tonalidades[notaAtual]!;
+    final intervalosPorNota = auxAcidentes[notaAtual]!;
     intervaloAtual = intervaloSelecionado;
     respostaCorreta = intervalosPorNota[intervaloAtual]!;
     notasSorteadas.add(notaAtual);

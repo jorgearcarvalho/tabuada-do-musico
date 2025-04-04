@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tcc_app/database/tonalidades.dart';
+import 'package:tcc_app/database/tonalidades/naturais.dart';
 import 'dart:math';
 
 class CampoHarmonicoPage extends StatefulWidget {
@@ -28,7 +28,7 @@ class _CampoHarmonicoPageState extends State<CampoHarmonicoPage> {
 
     // Seleciona uma tonalidade aleatória
     tonalidadeAtual =
-        tonalidades.keys.elementAt(random.nextInt(tonalidades.length));
+        notasNaturais.keys.elementAt(random.nextInt(notasNaturais.length));
 
     // Decide se será maior ou menor
     modoAtual = random.nextBool() ? 'maior' : 'menor';
@@ -45,7 +45,7 @@ class _CampoHarmonicoPageState extends State<CampoHarmonicoPage> {
   }
 
   List<String> gerarCampoHarmonico(String tonalidade, String modo) {
-    final campo = tonalidades[tonalidade]!;
+    final campo = notasNaturais[tonalidade]!;
 
     if (modo == 'maior') {
       return [

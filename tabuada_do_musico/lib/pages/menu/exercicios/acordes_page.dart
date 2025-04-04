@@ -1,6 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:tcc_app/database/tonalidades.dart';
+import 'package:tcc_app/database/tonalidades/bemois.dart';
+import 'package:tcc_app/database/tonalidades/naturais.dart';
+import 'package:tcc_app/database/tonalidades/sustenidos.dart';
 import 'dart:async';
 import 'dart:math';
 import '../../../models/acordes.dart';
@@ -30,18 +32,16 @@ class _AcordesPageState extends State<AcordesPage> {
     Random random = Random();
     List<Map<String, dynamic>> acordes = [];
 
-    List<String> tonalidadesPossiveis = tonalidades.keys.toList();
+    List<String> tonalidadesPossiveis = notasNaturais.keys.toList();
 
     List<String> tiposDeAcordes = Acorde.formulas.keys.toList();
 
     for (int i = 0; i < 10; i++) {
       String fundamental =
-          tonalidadesPossiveis[random.nextInt(tonalidades.length)];
+          tonalidadesPossiveis[random.nextInt(notasNaturais.length)];
       String tipo = tiposDeAcordes[random.nextInt(tiposDeAcordes.length)];
 
       Acorde acorde = Acorde(fundamental, tipo);
-
-      print(acorde);
 
       acordes.add({
         'nome': acorde.toString(),
@@ -137,9 +137,67 @@ class _AcordesPageState extends State<AcordesPage> {
                   alignment: WrapAlignment.center,
                   spacing: 10,
                   runSpacing: 10,
-                  children: tonalidades.keys.map((nota) {
+                  children: notasNaturais.keys.map((nota) {
                     return SizedBox(
-                      width: larguraDisponivel * 0.1, // Ajuste proporcional
+                      width: larguraDisponivel * 0.12, // Ajuste proporcional
+                      height: alturaDisponivel * 0.07, // Ajuste proporcional
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            if (selecaoUsuario.contains(nota)) {
+                              selecaoUsuario.remove(nota);
+                            } else if (selecaoUsuario.length < 4) {
+                              selecaoUsuario.add(nota);
+                            }
+                          });
+                        },
+                        child: Text(nota),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: selecaoUsuario.contains(nota)
+                              ? Colors.green
+                              : const Color.fromARGB(255, 100, 185, 255),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 15),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: notasBemois.keys.map((nota) {
+                    return SizedBox(
+                      width: larguraDisponivel * 0.12, // Ajuste proporcional
+                      height: alturaDisponivel * 0.07, // Ajuste proporcional
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            if (selecaoUsuario.contains(nota)) {
+                              selecaoUsuario.remove(nota);
+                            } else if (selecaoUsuario.length < 4) {
+                              selecaoUsuario.add(nota);
+                            }
+                          });
+                        },
+                        child: Text(nota),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: selecaoUsuario.contains(nota)
+                              ? Colors.green
+                              : const Color.fromARGB(255, 100, 185, 255),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 15),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: notasSustenidas.keys.map((nota) {
+                    return SizedBox(
+                      width: larguraDisponivel * 0.12, // Ajuste proporcional
                       height: alturaDisponivel * 0.07, // Ajuste proporcional
                       child: ElevatedButton(
                         onPressed: () {

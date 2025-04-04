@@ -1,4 +1,6 @@
-import 'package:tcc_app/database/tonalidades.dart';
+import 'package:tcc_app/database/tonalidades/bemois.dart';
+import 'package:tcc_app/database/tonalidades/sustenidos.dart';
+import 'package:tcc_app/database/tonalidades/naturais.dart';
 
 class Acorde {
   final String fundamental;
@@ -30,24 +32,33 @@ class Acorde {
 
   List<Map<String, String>> mapearNotas(String fundamental) {
     final intervalos = formulas[tipo];
-    print(intervalos);
 
     if (intervalos == null) {
       throw Exception('Tipo de acorde desconhecido: $tipo');
     }
 
-    final mapaDaTonalidade = tonalidades[fundamental];
+    Map<String, String>? mapaDaTonalidade;
+
+    if (fundamental.contains('b')) {
+      mapaDaTonalidade = notasBemois[fundamental];
+    } else if (fundamental.contains('#')) {
+      mapaDaTonalidade = notasSustenidas[fundamental];
+    } else {
+      mapaDaTonalidade = notasNaturais[fundamental];
+    }
+
+    if (mapaDaTonalidade == null) {
+      throw Exception('Fundamental inválida ou não encontrada: $fundamental');
+    }
 
     final intervalosMapeados = intervalos.map((intervalo) {
-      final nota = mapaDaTonalidade?[intervalo];
+      final nota = mapaDaTonalidade![intervalo];
       if (nota == null) {
         throw Exception('Intervalo desconhecido: $intervalo');
       }
 
       return {intervalo: nota};
     }).toList();
-
-    print(intervalosMapeados);
 
     return intervalosMapeados;
   }

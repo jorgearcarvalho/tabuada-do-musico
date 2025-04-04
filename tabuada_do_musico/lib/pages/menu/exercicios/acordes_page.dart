@@ -13,6 +13,7 @@ class AcordesPage extends StatefulWidget {
 }
 
 class _AcordesPageState extends State<AcordesPage> {
+  int contadorAcordesSorteados = 0;
   late Map<String, dynamic> acordeAtual;
   List<String> selecaoUsuario = [];
   int acertos = 0;
@@ -34,11 +35,14 @@ class _AcordesPageState extends State<AcordesPage> {
 
     List<String> tonalidadesPossiveis = notasNaturais.keys.toList();
 
+    if (contadorAcordesSorteados >= 5 && contadorAcordesSorteados < 10) { tonalidadesPossiveis = notasBemois.keys.toList();}
+    else if (contadorAcordesSorteados >= 10) { tonalidadesPossiveis = notasSustenidas.keys.toList();}
+
     List<String> tiposDeAcordes = Acorde.formulas.keys.toList();
 
     for (int i = 0; i < 10; i++) {
       String fundamental =
-          tonalidadesPossiveis[random.nextInt(notasNaturais.length)];
+          tonalidadesPossiveis[random.nextInt(tonalidadesPossiveis.length)];
       String tipo = tiposDeAcordes[random.nextInt(tiposDeAcordes.length)];
 
       Acorde acorde = Acorde(fundamental, tipo);
@@ -48,6 +52,8 @@ class _AcordesPageState extends State<AcordesPage> {
         'notas': acorde.mapearNotas(fundamental),
       });
     }
+
+    print(acordes);
 
     return acordes;
   }
@@ -77,11 +83,24 @@ class _AcordesPageState extends State<AcordesPage> {
     });
   }
 
+  bool compararNotas(List<String> a, List<String> b) {
+    if (a.length != b.length) return false;
+    
+    for (int i =0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    
+    return true;
+  }
+
   void verificarResposta() {
+    print(selecaoUsuario);
+    print(acordeAtual);
+    bool respostaCorreta = compararNotas(selecaoUsuario.toSet().toList(), acordeAtual.values.toList().cast<String>()); // Debugar
     tentativas++;
-    if (ListEquality()
-        .equals(selecaoUsuario.toSet().toList(), acordeAtual['notas'])) {
+    if (respostaCorreta) {
       acertos++;
+      print('novo exercicio');
       iniciarNovoExercicio();
     }
   }

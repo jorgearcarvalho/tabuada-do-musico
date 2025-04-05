@@ -9,10 +9,19 @@ class MenuPages extends StatefulWidget {
 
 class _MenuPages extends State<MenuPages> {
   bool _showMainMenu = true; // Tracks which menu to display
+  int modulo = 0;
 
-  void _toggleMenu() {
+  void _ativaModulo1() {
     setState(() {
       _showMainMenu = !_showMainMenu;
+      modulo = 1;
+    });
+  }
+
+  void _ativaModulo2() {
+    setState(() {
+      _showMainMenu = !_showMainMenu;
+      modulo = 2;
     });
   }
 
@@ -21,7 +30,7 @@ class _MenuPages extends State<MenuPages> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ElevatedButton(
-          onPressed: _toggleMenu, // Switch to secondary menu
+          onPressed: _ativaModulo1, // Switch to secondary menu
           child: const Text('Módulo I - Formação básica',
               style: TextStyle(fontSize: 20)),
         ),
@@ -34,7 +43,7 @@ class _MenuPages extends State<MenuPages> {
     );
   }
 
-  Widget _buildMenuPrincipal(BuildContext context) {
+  Widget _buildMenuPrincipalModulo1(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -61,7 +70,7 @@ class _MenuPages extends State<MenuPages> {
         ),
         const SizedBox(height: 60),
         ElevatedButton(
-          onPressed: _toggleMenu, // Return to main menu
+          onPressed: _ativaModulo1, // Return to main menu
           child: const Text('menu inicial', style: TextStyle(fontSize: 20)),
         ),
       ],
@@ -79,7 +88,7 @@ class _MenuPages extends State<MenuPages> {
           duration: const Duration(milliseconds: 300),
           child: _showMainMenu
               ? _buildMenuInicial(context)
-              : _buildMenuPrincipal(context),
+              : _buildMenuPrincipalModulo1(context),
         ),
       ),
     );

@@ -86,6 +86,7 @@ class _AcordesPageState extends State<AcordesPage> {
   void iniciarNovoExercicio() {
     setState(() {
       // Sorteia novos acordes
+      iniciarTimer();
       List<Map<String, dynamic>> acordesSorteados = gerarAcordesAleatorios();
       acordeAtual =
           acordesSorteados.first; // Pega o primeiro acorde para o exercício
@@ -123,7 +124,7 @@ class _AcordesPageState extends State<AcordesPage> {
       acertos++;
       iniciarNovoExercicio();
     } else if (!respostaCorreta) {
-      acordesErrados += acordeAtual['nome'] + '| ';
+      acordesErrados += acordeAtual['nome'] + ' | ';
     }
   }
 

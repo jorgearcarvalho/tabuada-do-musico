@@ -1,0 +1,94 @@
+{
+    "usuario":{
+        "nome": "",
+        "nível": 0
+    },
+    "configuracoes":{
+        
+    },
+    "estatisticas":{
+        "intervalos": {
+            "mostrar_tutorial": true,
+            "notas_possiveis": ["C", "D", "E", "F", "G", "A", "B"],
+            "acidentes_possiveis": ["bb", "b", "#", "x"],
+            "2m": {
+                "bloqueado": false,
+                "tempo_atual": 0,
+                "melhor_tempo": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            },
+            "2M": {
+                "bloqueado": false,
+                "tempo_atual": 0,
+                "melhor_tempo": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            },
+            "3m": {
+                "bloqueado": true,
+                "tempo_atual": 0,
+                "melhor_tempo": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            },
+            "3M": {
+                "bloqueado": true,
+                "tempo_atual": 0,
+                "melhor_tempo": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            },
+            "4J": {
+                "bloqueado": true,
+                "tempo_atual": 0,
+                "melhor_tempo": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            },
+            "4A | 5d": {
+                "bloqueado": true,
+                "tempo_atual": 0,
+                "melhor_tempo": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            },
+            "5J": {
+                "bloqueado": true,
+                "tempo_atual": 0,
+                "melhor_tempo": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            },
+            "6m": {
+                "bloqueado": true,
+                "tempo_atual": 0,
+                "melhor_tempo": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            },
+            "6M": {
+                "bloqueado": true,
+                "tempo_atual": 0,
+                "melhor_tempo": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            },
+            "7m": {
+                "bloqueado": true,
+                "tempo_atual": 0,
+                "melhor_tempo": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            },
+            "7M": {
+                "bloqueado": true,
+                "tempo_atual": 0,
+                "melhor_tempo": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            }
+        },
+        "acordes": {}
+    }
+}

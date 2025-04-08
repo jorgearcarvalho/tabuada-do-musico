@@ -60,9 +60,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - images/clave_de_sol.webp
-    - images/clave_de_sol.png
-  #   - images/a_dot_ham.jpeg
+    - assets/images/clave_de_sol.webp
+    - assets/images/clave_de_sol.png
+    - assets/estatisticas.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

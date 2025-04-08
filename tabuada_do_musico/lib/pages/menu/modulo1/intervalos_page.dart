@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:tcc_app/database/tonalidades/bemois.dart';
 import 'package:tcc_app/database/tonalidades/sustenidos.dart';
 import '../../../database/tonalidades/naturais.dart';
@@ -22,19 +24,7 @@ class _IntervalosPageState extends State<IntervalosPage> {
   String acidenteEscolhido = ''; // Novo estado para o acidente escolhido
   final List<String> notasPossiveis = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
   final List<String> acidentesPossiveis = ['bb', 'b', '#', 'x'];
-  final List<String> intervalosDisponiveis = [
-    '2m',
-    '2M',
-    '3m',
-    '3M',
-    '4J',
-    '5d',
-    '5J',
-    '6m',
-    '6M',
-    '7m',
-    '7M'
-  ];
+  late List<Map<String, dynamic>> intervalosDisponiveis = [];
 
   late Timer _timer;
   int _contadorTempo = 0;
@@ -49,6 +39,34 @@ class _IntervalosPageState extends State<IntervalosPage> {
   @override
   void initState() {
     super.initState();
+    _carregarIntervalos();
+  }
+
+  Future<void> _carregarIntervalos() async {
+    final String response = await rootBundle.loadString('estatisticas.json');
+    final Map<String, dynamic> data = json.decode(response);
+
+    final Map<String, dynamic> intervalosRaw =
+        data['estatisticas']['intervalos'];
+
+    final List<Map<String, dynamic>> intervalos = [];
+
+    intervalosRaw.forEach((key, value) {
+      if (value is Map<String, dynamic> && value.containsKey('bloqueado')) {
+        intervalos.add({
+          'nome': key,
+          'bloqueado': value['bloqueado'],
+          "tempo_atual": value['tempo_atual'],
+          "melhor_tempo": value['tempo_atual'],
+          "pontuacao_atual": value['pontuacao_atual'],
+          "melhor_pontuacao": value['melhor_pontuacao'],
+        });
+      }
+    });
+
+    setState(() {
+      intervalosDisponiveis = intervalos;
+    });
   }
 
   void _startContador() {
@@ -208,18 +226,21 @@ class _IntervalosPageState extends State<IntervalosPage> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20),
-                Wrap(
-                  spacing: 20,
-                  runSpacing: 10,
-                  alignment: WrapAlignment.start,
-                  runAlignment: WrapAlignment.start,
-                  children: intervalosDisponiveis.map((intervalo) {
-                    return ElevatedButton(
-                      onPressed: () => _selecionaIntervalo(intervalo),
-                      child: Text(intervalo),
+                Column(
+                  children: intervalosDisponiveis.map((intervaloMap) {
+                    final nome = intervaloMap['nome'];
+                    final bloqueado = intervaloMap['bloqueado'] as bool;
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 7.0),
+                      child: ElevatedButton(
+                        onPressed:
+                            bloqueado ? null : () => _selecionaIntervalo(nome),
+                        child: Text(nome),
+                      ),
                     );
                   }).toList(),
-                ),
+                )
               ] else ...[
                 const SizedBox(height: 20),
                 Text('Tempo: $_contadorTempo / $_maxTempo s'),

@@ -20,6 +20,30 @@ class _AcordesPageState extends State<AcordesPage> {
   int tentativas = 0;
   Timer? timer;
   int tempoRestante = 30;
+  String acordesErrados = '';
+  List<String> notasPossiveis = [
+    'Cb',
+    'Db',
+    'Eb',
+    'Fb',
+    'Gb',
+    'Ab',
+    'Bb',
+    'C',
+    'D',
+    'E',
+    'F',
+    'G',
+    'A',
+    'B',
+    'C#',
+    'D#',
+    'E#',
+    'F#',
+    'G#',
+    'A#',
+    'B#',
+  ];
 
   @override
   void initState() {
@@ -35,8 +59,11 @@ class _AcordesPageState extends State<AcordesPage> {
 
     List<String> tonalidadesPossiveis = notasNaturais.keys.toList();
 
-    if (contadorAcordesSorteados >= 5 && contadorAcordesSorteados < 10) { tonalidadesPossiveis = notasBemois.keys.toList();}
-    else if (contadorAcordesSorteados >= 10) { tonalidadesPossiveis = notasSustenidas.keys.toList();}
+    if (contadorAcordesSorteados >= 5 && contadorAcordesSorteados < 10) {
+      tonalidadesPossiveis = notasBemois.keys.toList();
+    } else if (contadorAcordesSorteados >= 10) {
+      tonalidadesPossiveis = notasSustenidas.keys.toList();
+    }
 
     List<String> tiposDeAcordes = Acorde.formulas.keys.toList();
 
@@ -53,14 +80,13 @@ class _AcordesPageState extends State<AcordesPage> {
       });
     }
 
-    print(acordes);
-
     return acordes;
   }
 
   void iniciarNovoExercicio() {
     setState(() {
       // Sorteia novos acordes
+      iniciarTimer();
       List<Map<String, dynamic>> acordesSorteados = gerarAcordesAleatorios();
       acordeAtual =
           acordesSorteados.first; // Pega o primeiro acorde para o exercício
@@ -83,25 +109,22 @@ class _AcordesPageState extends State<AcordesPage> {
     });
   }
 
-  bool compararNotas(List<String> a, List<String> b) {
-    if (a.length != b.length) return false;
-    
-    for (int i =0; i < a.length; i++) {
-      if (a[i] != b[i]) return false;
-    }
-    
-    return true;
-  }
-
   void verificarResposta() {
+    List<dynamic> notasCorretas = acordeAtual['notas'].map((notaMap) {
+      return notaMap.values.first;
+    }).toList();
+
     print(selecaoUsuario);
-    print(acordeAtual);
-    bool respostaCorreta = compararNotas(selecaoUsuario.toSet().toList(), acordeAtual.values.toList().cast<String>()); // Debugar
+    print(notasCorretas);
+
+    bool respostaCorreta = const SetEquality()
+        .equals(selecaoUsuario.toSet(), notasCorretas.toSet());
     tentativas++;
     if (respostaCorreta) {
       acertos++;
-      print('novo exercicio');
       iniciarNovoExercicio();
+    } else if (!respostaCorreta) {
+      acordesErrados += acordeAtual['nome'] + ' | ';
     }
   }
 
@@ -110,7 +133,8 @@ class _AcordesPageState extends State<AcordesPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Fim do tempo!'),
-        content: Text('Você acertou $acertos de $tentativas tentativas.'),
+        content: Text(
+            'Você acertou $acertos de $tentativas tentativas.\nEstude os acordes de: $acordesErrados'),
         actions: [
           TextButton(
             onPressed: () {
@@ -156,7 +180,7 @@ class _AcordesPageState extends State<AcordesPage> {
                   alignment: WrapAlignment.center,
                   spacing: 10,
                   runSpacing: 10,
-                  children: notasNaturais.keys.map((nota) {
+                  children: notasPossiveis.map((nota) {
                     return SizedBox(
                       width: larguraDisponivel * 0.12, // Ajuste proporcional
                       height: alturaDisponivel * 0.07, // Ajuste proporcional
@@ -180,64 +204,34 @@ class _AcordesPageState extends State<AcordesPage> {
                     );
                   }).toList(),
                 ),
-                SizedBox(height: 15),
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: notasBemois.keys.map((nota) {
-                    return SizedBox(
-                      width: larguraDisponivel * 0.12, // Ajuste proporcional
-                      height: alturaDisponivel * 0.07, // Ajuste proporcional
-                      child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            if (selecaoUsuario.contains(nota)) {
-                              selecaoUsuario.remove(nota);
-                            } else if (selecaoUsuario.length < 4) {
-                              selecaoUsuario.add(nota);
-                            }
-                          });
-                        },
-                        child: Text(nota),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: selecaoUsuario.contains(nota)
-                              ? Colors.green
-                              : const Color.fromARGB(255, 100, 185, 255),
+                // Display selected notes
+                if (selecaoUsuario.isNotEmpty) ...[
+                  SizedBox(height: 20),
+                  Text(
+                    'Notas Selecionadas:',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: selecaoUsuario.map((nota) {
+                      return Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(5),
                         ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-                SizedBox(height: 15),
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: notasSustenidas.keys.map((nota) {
-                    return SizedBox(
-                      width: larguraDisponivel * 0.12, // Ajuste proporcional
-                      height: alturaDisponivel * 0.07, // Ajuste proporcional
-                      child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            if (selecaoUsuario.contains(nota)) {
-                              selecaoUsuario.remove(nota);
-                            } else if (selecaoUsuario.length < 4) {
-                              selecaoUsuario.add(nota);
-                            }
-                          });
-                        },
-                        child: Text(nota),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: selecaoUsuario.contains(nota)
-                              ? Colors.green
-                              : const Color.fromARGB(255, 100, 185, 255),
+                        child: Text(
+                          nota,
+                          style: TextStyle(color: Colors.white),
                         ),
-                      ),
-                    );
-                  }).toList(),
-                ),
+                      );
+                    }).toList(),
+                  ),
+                ],
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: verificarResposta,

@@ -39,7 +39,7 @@ class _IntervalosPageState extends State<IntervalosPage> {
   @override
   void initState() {
     super.initState();
-    _carregarIntervalos();
+    _carregarIntervalos(); // Adicionar fluidez no carregamento
   }
 
   Future<void> _carregarIntervalos() async {

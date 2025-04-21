@@ -16,4 +16,4 @@ O aplicativo pretende fornecer uma ferramenta de estudos para auxiliar músicos 
 - Mateus Silva Araújo, 2112130043
 
 #### Sob orientação de
-- Daniel
+- Daniel da Silva Souza

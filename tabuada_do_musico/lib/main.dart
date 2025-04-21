@@ -27,10 +27,10 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (context) => const HomePage(),
           '/menu': (context) => MenuPages(),
-          '/intervalos': (context) => IntervalosPage(),
+          '/intervalos': (context) => IntervalosMenuPage(),
           '/acordes': (context) => AcordesPage(),
           '/escalas': (context) => EscalasPage(), // implementar
-          '/harmonia': (context) => CampoHarmonicoPage(), // testar
+          '/harmonia': (context) => CampoHarmonicoPage(), // implementar
           '/creditos': (context) => const CreditosPage()
         });
   }

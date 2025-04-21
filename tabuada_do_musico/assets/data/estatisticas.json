@@ -1,0 +1,157 @@
+{
+    "usuario":{
+        "nome": ""
+    },
+    "configuracoes":{
+        
+    },
+    "estatisticas":{
+        "intervalos": {
+            "notas_possiveis": ["C", "D", "E", "F", "G", "A", "B"],
+            "acidentes_possiveis": ["bb", "b", "#", "x"],
+            "mostrar_tutorial": true,
+            "progresso": 0,
+            "2m": {
+                "bloqueado": false,
+                "medalha": 0,
+                "tempo_atual": 0,
+                "melhor_tempo:": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            },
+            "2M": {
+                "bloqueado": false,
+                "medalha": 0,
+                "tempo_atual": 0,
+                "melhor_tempo:": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            },
+            "3m": {
+                "bloqueado": true,
+                "medalha": 0,
+                "tempo_atual": 0,
+                "melhor_tempo:": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            },
+            "3M": {
+                "bloqueado": true,
+                "medalha": 0,
+                "tempo_atual": 0,
+                "melhor_tempo:": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            },
+            "4J": {
+                "bloqueado": true,
+                "medalha": 0,
+                "tempo_atual": 0,
+                "melhor_tempo:": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            },
+            "4A | 5d": {
+                "bloqueado": true,
+                "medalha": 0,
+                "tempo_atual": 0,
+                "melhor_tempo:": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            },
+            "5J": {
+                "bloqueado": true,
+                "medalha": 0,
+                "tempo_atual": 0,
+                "melhor_tempo:": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            },
+            "6m": {
+                "bloqueado": true,
+                "medalha": 0,
+                "tempo_atual": 0,
+                "melhor_tempo:": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            },
+            "6M": {
+                "bloqueado": true,
+                "medalha": 0,
+                "tempo_atual": 0,
+                "melhor_tempo:": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            },
+            "7m": {
+                "bloqueado": true,
+                "medalha": 0,
+                "tempo_atual": 0,
+                "melhor_tempo:": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            },
+            "7M": {
+                "bloqueado": true,
+                "medalha": 0,
+                "tempo_atual": 0,
+                "melhor_tempo:": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            }
+        },
+        "acordes": {
+            "mostrar_tutorial": true,
+            "progresso": 0,
+            "Triades": {
+                "Maior e menor": {
+                    "bloqueado": true,
+                    "medalha": 0,
+                    "tempo_atual": 0,
+                    "melhor_tempo:": 0,
+                    "pontuacao_atual": 0,
+                    "melhor_pontuacao": 0
+                },
+                "Aum e sus4": {
+                    "bloqueado": true,
+                    "medalha": 0,
+                    "tempo_atual": 0,
+                    "melhor_tempo:": 0,
+                    "pontuacao_atual": 0,
+                    "melhor_pontuacao": 0
+                }
+            },
+            "Tetrades": {
+                "7M e 7": {
+                    "bloqueado": true,
+                    "medalha": 0,
+                    "tempo_atual": 0,
+                    "melhor_tempo:": 0,
+                    "pontuacao_atual": 0,
+                    "melhor_pontuacao": 0
+                },
+                "Dim e m7b5": {
+                    "bloqueado": true,
+                    "medalha": 0,
+                    "tempo_atual": 0,
+                    "melhor_tempo:": 0,
+                    "pontuacao_atual": 0,
+                    "melhor_pontuacao": 0
+                }
+            }
+        },
+        "escalas": {
+            "mostrar_tutorial": true,
+            "progresso": 0,
+            "Maior": {
+                "medalha":0
+            },
+            "menor Harmonica": {
+                "medalha":0
+            },
+            "menor melodica": {
+                "medalha":0
+            }
+        }
+    }
+}

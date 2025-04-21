@@ -10,7 +10,13 @@ class _EscalasPageState extends State<EscalasPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-      title: Text('Formação de Escalas'),
-    ));
+            title: Text('Formação de Escalas')),
+        body: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+                Center(child:Text('Em desenvolvimento'))
+            ]
+        )
+      );
   }
 }

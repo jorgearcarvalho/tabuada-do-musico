@@ -36,6 +36,12 @@ class _MenuPages extends State<MenuPages> {
         ),
         const SizedBox(height: 30),
         ElevatedButton(
+          onPressed: _ativaModulo2, // Switch to secondary menu
+          child: const Text('Módulo II - Formação técnica',
+              style: TextStyle(fontSize: 20)),
+        ),
+        const SizedBox(height: 30),
+        ElevatedButton(
           onPressed: () => Navigator.pushNamed(context, '/creditos'),
           child: const Text('Creditos', style: TextStyle(fontSize: 20)),
         )
@@ -44,37 +50,46 @@ class _MenuPages extends State<MenuPages> {
   }
 
   Widget _buildMenuPrincipalModulo1(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        ElevatedButton(
-          onPressed: () => Navigator.pushNamed(context, '/intervalos'),
-          child: const Text('Intervalos', style: TextStyle(fontSize: 20)),
-        ),
-        const SizedBox(height: 30),
-        ElevatedButton(
-          onPressed: () => Navigator.pushNamed(context, '/acordes'),
-          child:
-              const Text('Formação de Acordes', style: TextStyle(fontSize: 20)),
-        ),
-        const SizedBox(height: 30),
-        ElevatedButton(
-          onPressed: () => Navigator.pushNamed(context, '/escalas'),
-          child:
-              const Text('Formação de Escalas', style: TextStyle(fontSize: 20)),
-        ),
-        const SizedBox(height: 30),
-        ElevatedButton(
-          onPressed: () => Navigator.pushNamed(context, '/harmonia'),
-          child: const Text('Campo Harmônico', style: TextStyle(fontSize: 20)),
-        ),
-        const SizedBox(height: 60),
-        ElevatedButton(
-          onPressed: _ativaModulo1, // Return to main menu
-          child: const Text('menu inicial', style: TextStyle(fontSize: 20)),
-        ),
-      ],
-    );
+    if (modulo == 1) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(
+            onPressed: () => Navigator.pushNamed(context, '/intervalos'),
+            child: const Text('Intervalos', style: TextStyle(fontSize: 20)),
+          ),
+          const SizedBox(height: 30),
+          ElevatedButton(
+            onPressed: () => Navigator.pushNamed(context, '/acordes'),
+            child:
+            const Text('Formação de Acordes', style: TextStyle(fontSize: 20)),
+          ),
+          const SizedBox(height: 30),
+          ElevatedButton(
+            onPressed: () => Navigator.pushNamed(context, '/escalas'),
+            child:
+            const Text('Formação de Escalas', style: TextStyle(fontSize: 20)),
+          ),
+          const SizedBox(height: 30),
+          ElevatedButton(
+            onPressed: () => Navigator.pushNamed(context, '/harmonia'),
+            child: const Text('Campo Harmônico', style: TextStyle(fontSize: 20)),
+          ),
+          const SizedBox(height: 60),
+          ElevatedButton(
+            onPressed: _ativaModulo1, // Return to main menu
+            child: const Text('menu inicial', style: TextStyle(fontSize: 20)),
+          ),
+        ],
+      );
+    }
+    if (modulo == 2) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [Text('Em desenvolvimento')]
+      );
+    };
+    return Text('Out of reach');
   }
 
   @override

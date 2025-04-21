@@ -7,8 +7,7 @@ class Intervalo {
 
   Intervalo({
     required this.bloqueado,
-    required tempoAtual,
-    required melhorTempo,
+    required medalha,
     required pontuacaoAtual,
     required melhorPontuacao,
   });
@@ -16,8 +15,7 @@ class Intervalo {
   factory Intervalo.fromJson(Map<String, dynamic> json) {
     return Intervalo(
         bloqueado: json['bloqueado'],
-        tempoAtual: json['tempoAtual'],
-        melhorTempo: json['melhorTempo'],
+        medalha: json['medalha'],
         pontuacaoAtual: json['pontuacaoAtual'],
         melhorPontuacao: json['melhorPontuacao']);
   }

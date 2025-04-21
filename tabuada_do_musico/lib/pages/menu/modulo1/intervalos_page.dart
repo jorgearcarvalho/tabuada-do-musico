@@ -7,6 +7,36 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
 
+class IntervalosMenuPage extends StatelessWidget {
+  const IntervalosMenuPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Treino de Intervalos')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('Modo Livre', style: TextStyle(fontSize: 20)),
+            ),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => IntervalosPage()));
+              },
+              child: const Text('Modo Desafio', style: TextStyle(fontSize: 20)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class IntervalosPage extends StatefulWidget {
   @override
   _IntervalosPageState createState() => _IntervalosPageState();
@@ -43,7 +73,8 @@ class _IntervalosPageState extends State<IntervalosPage> {
   }
 
   Future<void> _carregarIntervalos() async {
-    final String response = await rootBundle.loadString('estatisticas.json');
+    final String response =
+        await rootBundle.loadString('assets/data/estatisticas.json');
     final Map<String, dynamic> data = json.decode(response);
 
     final Map<String, dynamic> intervalosRaw =
@@ -56,8 +87,9 @@ class _IntervalosPageState extends State<IntervalosPage> {
         intervalos.add({
           'nome': key,
           'bloqueado': value['bloqueado'],
+          'medalha': value['medalha'],
           "tempo_atual": value['tempo_atual'],
-          "melhor_tempo": value['tempo_atual'],
+          "melhor_tempo": value['melhor_tempo'],
           "pontuacao_atual": value['pontuacao_atual'],
           "melhor_pontuacao": value['melhor_pontuacao'],
         });
@@ -199,6 +231,19 @@ class _IntervalosPageState extends State<IntervalosPage> {
     });
   }
 
+  Color _retornaMedalhaCor(int medalha) {
+    switch (medalha) {
+      case 3:
+        return Colors.amber;
+      case 2:
+        return Colors.grey;
+      case 1:
+        return Colors.brown;
+      default:
+        return Colors.grey.withOpacity(0.3);
+    }
+  }
+
   @override
   void dispose() {
     if (_timer.isActive) {
@@ -227,20 +272,55 @@ class _IntervalosPageState extends State<IntervalosPage> {
                 ),
                 const SizedBox(height: 20),
                 Column(
-                  children: intervalosDisponiveis.map((intervaloMap) {
-                    final nome = intervaloMap['nome'];
-                    final bloqueado = intervaloMap['bloqueado'] as bool;
+                  children: [
+                    ...intervalosDisponiveis.map((intervaloMap) {
+                      final nome = intervaloMap['nome'];
+                      final bloqueado = intervaloMap['bloqueado'] as bool;
+                      final medalha = intervaloMap['medalha'];
 
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 7.0),
-                      child: ElevatedButton(
-                        onPressed:
-                            bloqueado ? null : () => _selecionaIntervalo(nome),
-                        child: Text(nome),
-                      ),
-                    );
-                  }).toList(),
-                )
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 7.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (!bloqueado)
+                              Icon(Icons.emoji_events,
+                                  color: _retornaMedalhaCor(medalha), size: 24),
+                            const SizedBox(width: 5),
+                            ElevatedButton(
+                              onPressed: bloqueado
+                                  ? null
+                                  : () => _selecionaIntervalo(nome),
+                              child: Text(nome),
+                            )
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                        child: Column(
+                      children: [
+                        Container(
+                            height: 8,
+                            width: 150,
+                            child: LinearProgressIndicator(
+                              value: _contadorRespostas / _maxRespostas,
+                              minHeight: 8,
+                              backgroundColor: Colors.grey[300],
+                              color: Colors.blue,
+                            )),
+                        SizedBox(height: 5),
+                        Text(
+                          'Progresso',
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ],
+                    )),
+                  ],
+                ),
               ] else ...[
                 const SizedBox(height: 20),
                 Text('Tempo: $_contadorTempo / $_maxTempo s'),

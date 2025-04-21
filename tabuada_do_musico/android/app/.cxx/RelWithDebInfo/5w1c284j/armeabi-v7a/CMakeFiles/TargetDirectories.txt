@@ -1,0 +1,2 @@
+/home/povaloid/Documents/cic/projetos/tcc-iesb/tabuada_do_musico/android/app/.cxx/RelWithDebInfo/5w1c284j/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+/home/povaloid/Documents/cic/projetos/tcc-iesb/tabuada_do_musico/android/app/.cxx/RelWithDebInfo/5w1c284j/armeabi-v7a/CMakeFiles/edit_cache.dir

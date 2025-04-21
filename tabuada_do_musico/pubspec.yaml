@@ -62,7 +62,7 @@ flutter:
   assets:
     - assets/images/clave_de_sol.webp
     - assets/images/clave_de_sol.png
-    - assets/estatisticas.json
+    - assets/data/estatisticas.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

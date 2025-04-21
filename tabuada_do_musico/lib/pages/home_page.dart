@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
                 'Um aplicativo para \nauxiliar no seu estudo \nde teoria musical',
                 style: TextStyle(fontSize: 20)),
             const SizedBox(height: 20),
-            Image.asset('images/clave_de_sol.webp', width: 150, height: 150),
+            Image.asset('assets/images/clave_de_sol.webp', width: 150, height: 150),
             const SizedBox(height: 40),
             ElevatedButton(
               onPressed: () {

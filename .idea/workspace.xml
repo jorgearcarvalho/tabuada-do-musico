@@ -5,19 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c87a7c08-01af-4101-9a8b-f9fc51d78a0d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/tabuada_do_musico/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/tabuada_do_musico/android/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tabuada_do_musico/android/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/tabuada_do_musico/android/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tabuada_do_musico/assets/estatisticas.json" beforeDir="false" afterPath="$PROJECT_DIR$/tabuada_do_musico/assets/data/estatisticas.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tabuada_do_musico/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/tabuada_do_musico/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tabuada_do_musico/lib/models/intervalo.dart" beforeDir="false" afterPath="$PROJECT_DIR$/tabuada_do_musico/lib/models/intervalo.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tabuada_do_musico/lib/pages/creditos_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/tabuada_do_musico/lib/pages/creditos_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tabuada_do_musico/lib/pages/home_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/tabuada_do_musico/lib/pages/home_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tabuada_do_musico/lib/pages/creditos_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/tabuada_do_musico/lib/pages/creditos/creditos_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tabuada_do_musico/lib/pages/menu/menu_pages.dart" beforeDir="false" afterPath="$PROJECT_DIR$/tabuada_do_musico/lib/pages/menu/menu_pages.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tabuada_do_musico/lib/pages/menu/modulo1/escalas_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/tabuada_do_musico/lib/pages/menu/modulo1/escalas_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tabuada_do_musico/lib/pages/menu/modulo1/harmonia_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/tabuada_do_musico/lib/pages/menu/modulo1/harmonia_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tabuada_do_musico/lib/pages/menu/modulo1/intervalos_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/tabuada_do_musico/lib/pages/menu/modulo1/intervalos_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tabuada_do_musico/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/tabuada_do_musico/pubspec.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tabuada_do_musico/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/tabuada_do_musico/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tabuada_do_musico/lib/pages/menu/modulo1/acordes_page.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tabuada_do_musico/lib/pages/menu/modulo1/escalas_page.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tabuada_do_musico/lib/pages/menu/modulo1/harmonia_page.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tabuada_do_musico/lib/pages/menu/modulo1/intervalos_page.dart" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,33 +30,39 @@
   &quot;associatedIndex&quot;: 3
 }</component>
   <component name="ProjectId" id="2vxmT9BDhD6ffCHDzPAzRvDNiEL" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Application.Tabuada do Musico.executor&quot;: &quot;Run&quot;,
-    &quot;Flutter.Tabuada do Musico.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;deletionFromPopupRequiresConfirmation&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;DTM-2__main&quot;,
-    &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/povaloid/Documents/cic/projetos/tcc-iesb&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;Errors&quot;,
-    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Application.Tabuada do Musico.executor": "Run",
+    "Flutter.Tabuada do Musico.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "deletionFromPopupRequiresConfirmation": "false",
+    "git-widget-placeholder": "EXAC-1__main__draft",
+    "io.flutter.reload.alreadyRun": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/povaloid/Documents/cic/projetos/tcc-iesb",
+    "settings.editor.selected.configurable": "Errors",
+    "show.migrate.to.gradle.popup": "false"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/tabuada_do_musico/lib/pages/creditos" />
+      <recent name="$PROJECT_DIR$/tabuada_do_musico/lib/database" />
+      <recent name="$PROJECT_DIR$/tabuada_do_musico/lib/models" />
       <recent name="$PROJECT_DIR$/tabuada_do_musico/assets/data" />
     </key>
   </component>

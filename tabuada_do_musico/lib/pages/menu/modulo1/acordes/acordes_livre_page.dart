@@ -5,14 +5,16 @@ import 'package:tcc_app/database/tonalidades/naturais.dart';
 import 'package:tcc_app/database/tonalidades/sustenidos.dart';
 import 'dart:async';
 import 'dart:math';
-import '../../../models/acordes.dart';
+import '../../../../models/acordes.dart';
 
-class AcordesPage extends StatefulWidget {
+class AcordesLivrePage extends StatefulWidget {
+  const AcordesLivrePage({super.key});
+
   @override
-  _AcordesPageState createState() => _AcordesPageState();
+  _AcordesLivrePageState createState() => _AcordesLivrePageState();
 }
 
-class _AcordesPageState extends State<AcordesPage> {
+class _AcordesLivrePageState extends State<AcordesLivrePage> {
   int contadorAcordesSorteados = 0;
   late Map<String, dynamic> acordeAtual;
   List<String> selecaoUsuario = [];
@@ -22,27 +24,41 @@ class _AcordesPageState extends State<AcordesPage> {
   int tempoRestante = 30;
   String acordesErrados = '';
   List<String> notasPossiveis = [
+    'Cbb',
     'Cb',
-    'Db',
-    'Eb',
-    'Fb',
-    'Gb',
-    'Ab',
-    'Bb',
     'C',
-    'D',
-    'E',
-    'F',
-    'G',
-    'A',
-    'B',
     'C#',
+    'Cx',
+    'Dbb',
+    'Db',
+    'D',
     'D#',
+    'Dx',
+    'Ebb',
+    'Eb',
+    'E',
     'E#',
+    'Ex',
+    'Fbb',
+    'Fb',
+    'F',
     'F#',
+    'Fx',
+    'Gbb',
+    'Gb',
+    'G',
     'G#',
+    'Gx',
+    'Abb',
+    'Ab',
+    'A',
     'A#',
+    'Ax',
+    'Bbb',
+    'Bb',
+    'B',
     'B#',
+    'Bx'
   ];
 
   @override
@@ -175,16 +191,22 @@ class _AcordesPageState extends State<AcordesPage> {
                   'Identifique as notas do acorde: ${acordeAtual['nome']}',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 15),
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: notasPossiveis.map((nota) {
-                    return SizedBox(
-                      width: larguraDisponivel * 0.12, // Ajuste proporcional
-                      height: alturaDisponivel * 0.07, // Ajuste proporcional
-                      child: ElevatedButton(
+                SizedBox(height: 10),
+                Text('Tempo restante: $tempoRestante segundos'),
+                SizedBox(height: 10),
+                Container(
+                  // height: alturaDisponivel * 0.7,
+                  width: larguraDisponivel * 0.8,
+                  child: GridView.count(
+                    crossAxisCount: 5,
+                    mainAxisSpacing: 8,
+                    crossAxisSpacing: 8,
+                    childAspectRatio: 1,
+                    shrinkWrap: true,
+                    physics:
+                        NeverScrollableScrollPhysics(), // So it doesn't scroll separately
+                    children: notasPossiveis.map((nota) {
+                      return ElevatedButton(
                         onPressed: () {
                           setState(() {
                             if (selecaoUsuario.contains(nota)) {
@@ -194,17 +216,25 @@ class _AcordesPageState extends State<AcordesPage> {
                             }
                           });
                         },
-                        child: Text(nota),
                         style: ElevatedButton.styleFrom(
+                          shape: const CircleBorder(),
+                          padding: EdgeInsets.all(20),
                           backgroundColor: selecaoUsuario.contains(nota)
                               ? Colors.green
                               : const Color.fromARGB(255, 100, 185, 255),
                         ),
-                      ),
-                    );
-                  }).toList(),
+                        child: FittedBox(
+                          fit: BoxFit.fill,
+                          child: Text(
+                            nota,
+                            style: const TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
                 ),
-                // Display selected notes
                 if (selecaoUsuario.isNotEmpty) ...[
                   SizedBox(height: 20),
                   Text(
@@ -237,8 +267,6 @@ class _AcordesPageState extends State<AcordesPage> {
                   onPressed: verificarResposta,
                   child: Text('Verificar Resposta'),
                 ),
-                SizedBox(height: 20),
-                Text('Tempo restante: $tempoRestante segundos'),
               ],
             ),
           );

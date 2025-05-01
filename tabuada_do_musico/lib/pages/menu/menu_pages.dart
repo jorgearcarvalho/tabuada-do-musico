@@ -61,19 +61,14 @@ class _MenuPages extends State<MenuPages> {
           const SizedBox(height: 30),
           ElevatedButton(
             onPressed: () => Navigator.pushNamed(context, '/acordes'),
-            child:
-            const Text('Formação de Acordes', style: TextStyle(fontSize: 20)),
+            child: const Text('Formação de Acordes',
+                style: TextStyle(fontSize: 20)),
           ),
           const SizedBox(height: 30),
           ElevatedButton(
             onPressed: () => Navigator.pushNamed(context, '/escalas'),
-            child:
-            const Text('Formação de Escalas', style: TextStyle(fontSize: 20)),
-          ),
-          const SizedBox(height: 30),
-          ElevatedButton(
-            onPressed: () => Navigator.pushNamed(context, '/harmonia'),
-            child: const Text('Campo Harmônico', style: TextStyle(fontSize: 20)),
+            child: const Text('Formação de Escalas',
+                style: TextStyle(fontSize: 20)),
           ),
           const SizedBox(height: 60),
           ElevatedButton(
@@ -85,10 +80,10 @@ class _MenuPages extends State<MenuPages> {
     }
     if (modulo == 2) {
       return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [Text('Em desenvolvimento')]
-      );
-    };
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [Text('Em desenvolvimento')]);
+    }
+    ;
     return Text('Out of reach');
   }
 

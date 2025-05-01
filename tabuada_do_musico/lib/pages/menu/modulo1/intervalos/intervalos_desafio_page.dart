@@ -2,40 +2,10 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:tcc_app/database/tonalidades/bemois.dart';
 import 'package:tcc_app/database/tonalidades/sustenidos.dart';
-import '../../../database/tonalidades/naturais.dart';
+import '../../../../database/tonalidades/naturais.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
-
-class IntervalosMenuPage extends StatelessWidget {
-  const IntervalosMenuPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Treino de Intervalos')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text('Modo Livre', style: TextStyle(fontSize: 20)),
-            ),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => IntervalosPage()));
-              },
-              child: const Text('Modo Desafio', style: TextStyle(fontSize: 20)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class IntervalosPage extends StatefulWidget {
   @override

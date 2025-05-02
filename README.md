@@ -7,9 +7,8 @@ O aplicativo pretende fornecer uma ferramenta de estudos para auxiliar músicos 
 ### Conhecimentos em Teoria Musical a serem trabalhados
 ```
     1. Intervalos
-    2. Tríades
-    3. Tétrades
-    4. Campo Harmônico maior e menor
+    2. Formação de Acordes (Tríades e Tétrades)
+    3. Formação de Escalas (Maior, menor harmôica e menor melódica)
 ```
 #### Idealizado e desenvolvido por
 - Jorge Augusto Rocha de Carvalho, 2022130009

@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tcc_app/database/tonalidades/bemois.dart';
 import 'package:tcc_app/database/tonalidades/naturais.dart';
 import 'package:tcc_app/database/tonalidades/sustenidos.dart';
@@ -15,6 +16,7 @@ class AcordesLivrePage extends StatefulWidget {
 }
 
 class _AcordesLivrePageState extends State<AcordesLivrePage> {
+  bool _tutorialFinalizado = false;
   int contadorAcordesSorteados = 0;
   late Map<String, dynamic> acordeAtual;
   List<String> selecaoUsuario = [];
@@ -64,8 +66,36 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
   @override
   void initState() {
     super.initState();
-    iniciarNovoExercicio();
-    iniciarTimer();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _mostrarDialogoTutorial();
+    });
+  }
+
+  Future<void> _mostrarDialogoTutorial() async {
+    final String tutorialTxt = await rootBundle
+        .loadString('data/tutoriais/acordes/ac_tutorial_livre.txt');
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Tutorial'),
+            content: Text(tutorialTxt,
+                textAlign: TextAlign.justify, style: TextStyle(fontSize: 16)),
+            actions: [
+              TextButton(
+                onPressed: () => {
+                  Navigator.of(context).pop(),
+                  iniciarNovoExercicio(),
+                  setState(() {
+                    _tutorialFinalizado = true;
+                  })
+                },
+                child: Text('Entendido'),
+              ),
+            ],
+          );
+        });
   }
 
   // Função para gerar acordes aleatórios
@@ -102,10 +132,10 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
   void iniciarNovoExercicio() {
     setState(() {
       // Sorteia novos acordes
-      iniciarTimer();
       List<Map<String, dynamic>> acordesSorteados = gerarAcordesAleatorios();
       acordeAtual =
           acordesSorteados.first; // Pega o primeiro acorde para o exercício
+      iniciarTimer();
       selecaoUsuario.clear();
     });
   }
@@ -150,13 +180,13 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
       builder: (context) => AlertDialog(
         title: Text('Fim do tempo!'),
         content: Text(
-            'Você acertou $acertos de $tentativas tentativas.\nEstude os acordes de: $acordesErrados'),
+            'Pontuação: $acertos/$tentativas tentativas.\nErros: $acordesErrados'),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               iniciarNovoExercicio();
-              iniciarTimer();
+              // iniciarTimer();
               acertos = 0;
               tentativas = 0;
               tempoRestante = 30;
@@ -176,6 +206,12 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_tutorialFinalizado) {
+      return Scaffold(
+        appBar: AppBar(title: Text('Formação de Acordes')),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
     return Scaffold(
       appBar: AppBar(title: Text('Formação de Acordes')),
       body: LayoutBuilder(

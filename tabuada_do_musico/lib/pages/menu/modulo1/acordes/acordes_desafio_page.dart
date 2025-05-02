@@ -25,6 +25,9 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
         await rootBundle.loadString('assets/data/estatisticas.json');
     final Map<String, dynamic> data = json.decode(resposta);
 
+    final bool mostrarTutorial =
+        data['estatisticas']['acordes']['mostrar_tutorial'];
+
     final Map<String, dynamic> acordesStatsCru =
         data['estatisticas']['acordes'];
 
@@ -47,6 +50,33 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
     setState(() {
       exerciciosDisponiveis = acordesStats;
     });
+
+    if (mostrarTutorial) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _mostrarDialogoTutorial();
+      });
+    }
+  }
+
+  Future<void> _mostrarDialogoTutorial() async {
+    final String tutorialTxt = await rootBundle
+        .loadString('data/tutoriais/acordes/ac_tutorial_desafio.txt');
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Tutorial'),
+            content: Text(tutorialTxt,
+                textAlign: TextAlign.justify, style: TextStyle(fontSize: 16)),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('Entendido'),
+              ),
+            ],
+          );
+        });
   }
 
   Color _retornaMedalhaCor(int medalha) {
@@ -78,7 +108,8 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Selecione um tipo de acorde'),
+              Text('Selecione um grupo de acorde',
+                  style: TextStyle(fontSize: 18)),
               SizedBox(height: 20),
               Column(
                 children: exerciciosDisponiveis.map((acordeMapeado) {

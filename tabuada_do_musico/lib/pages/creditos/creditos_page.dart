@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CreditosPage extends StatelessWidget {
   const CreditosPage({super.key});
@@ -9,18 +10,15 @@ class CreditosPage extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Creditos'),
         ),
-        body: const Center(
+        body: Container(
+            padding: EdgeInsets.all(40),
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text(
-            "Este aplicativo foi desenvolvido \ncomo parte do Trabalho de \nConclusão de Curso (TCC) do \nBacharelado em Ciência da \nComputação, com o objetivo de \nproporcionar uma abordagem \ninterativa e gamificada para o \nestudo de elementos fundamentais \ndo campo que constitui a harmonia.",
-            style: TextStyle(fontSize: 18),
-          ),
-          SizedBox(height: 50),
-          Text(
-            "Alunos: \nJorge Augusto Rocha de Carvalho \nMatheus Silva Araújo",
-            style: TextStyle(fontSize: 18),
-          )
-        ])));
+              Text(
+                "Este aplicativo foi desenvolvido como parte do Trabalho de Conclusão de Curso (TCC) do Bacharelado em Ciência da Computação, com o objetivo de proporcionar uma abordagem interativa e gamificada para o estudo de elementos fundamentais do campo que constitui a harmonia. \n\nIdealizado e implementado por \nJorge Augusto Rocha de Carvalho \ne Matheus Silva Araújo. \n\nSob orientação de Daniel da Silva Souza.",
+                style: TextStyle(fontSize: 18),
+                textAlign: TextAlign.justify,
+              )
+            ])));
   }
 }

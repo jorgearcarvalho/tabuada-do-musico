@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tcc_app/pages/creditos/creditos_page.dart';
+import 'package:tcc_app/pages/creditos_page.dart';
 import 'package:tcc_app/pages/menu/menu_pages.dart';
 import 'pages/home_page.dart';
 import 'pages/menu/modulo1/intervalos/menu_intervalos_page.dart';

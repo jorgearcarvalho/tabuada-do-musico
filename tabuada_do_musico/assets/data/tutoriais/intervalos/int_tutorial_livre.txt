@@ -1,0 +1,3 @@
+Você receberá 10 segundos para indicar a nota que corresponde a algum intervalo sorteado a partir de uma nota qualquer.
+
+Por se tratar de um exercício livre, não haverá distribuição de medalhas, apenas um feedback com acertos e erros.

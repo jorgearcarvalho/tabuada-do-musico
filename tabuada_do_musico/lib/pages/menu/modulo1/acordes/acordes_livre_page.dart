@@ -217,7 +217,6 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           double larguraDisponivel = constraints.maxWidth;
-          double alturaDisponivel = constraints.maxHeight;
 
           return Center(
             child: Column(

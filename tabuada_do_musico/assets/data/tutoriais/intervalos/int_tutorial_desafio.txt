@@ -1,0 +1,10 @@
+Escolha um intervalo para estudar.
+
+Uma vez escolhido, você receberá 18 notas sorteadas e deverá, dentro de 36 segundos, indicar qual nota corresponde ao intervalo escolhido.
+
+Para liberar o próximo exercício, você deverá atingir medalha de ouro no anterior.
+
+Medalhas:
+50% = Bronze
+70% = Prata
+90% = Ouro

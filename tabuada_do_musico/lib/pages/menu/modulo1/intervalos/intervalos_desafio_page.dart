@@ -7,12 +7,12 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
 
-class IntervalosPage extends StatefulWidget {
+class IntervalosDesafioPage extends StatefulWidget {
   @override
-  _IntervalosPageState createState() => _IntervalosPageState();
+  _IntervalosDesafioPageState createState() => _IntervalosDesafioPageState();
 }
 
-class _IntervalosPageState extends State<IntervalosPage> {
+class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
   int contadorIntervalosSorteados = 0;
   String notaAtual = '';
   List<String> notasSorteadas = [];
@@ -42,10 +42,34 @@ class _IntervalosPageState extends State<IntervalosPage> {
     _carregarIntervalos();
   }
 
+  Future<void> _mostrarDialogoTutorial() async {
+    final String tutorialTxt = await rootBundle
+        .loadString('data/tutoriais/intervalos/int_tutorial_desafio.txt');
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Tutorial'),
+            content: Text(tutorialTxt,
+                textAlign: TextAlign.justify, style: TextStyle(fontSize: 16)),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('Entendido'),
+              ),
+            ],
+          );
+        });
+  }
+
   Future<void> _carregarIntervalos() async {
     final String response =
         await rootBundle.loadString('assets/data/estatisticas.json');
     final Map<String, dynamic> data = json.decode(response);
+
+    final bool mostrarTutorial =
+        data['estatisticas']['intervalos']['mostrar_tutorial'];
 
     final Map<String, dynamic> intervalosRaw =
         data['estatisticas']['intervalos'];
@@ -69,6 +93,12 @@ class _IntervalosPageState extends State<IntervalosPage> {
     setState(() {
       intervalosDisponiveis = intervalos;
     });
+
+    if (mostrarTutorial) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _mostrarDialogoTutorial();
+      });
+    }
   }
 
   void _startContador() {

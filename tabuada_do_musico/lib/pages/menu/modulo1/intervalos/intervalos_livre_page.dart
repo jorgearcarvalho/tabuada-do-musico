@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:tcc_app/database/tonalidades/bemois.dart';
 import 'package:tcc_app/database/tonalidades/sustenidos.dart';
@@ -16,25 +15,38 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
   int contadorIntervalosSorteados = 0;
   String notaAtual = '';
   List<String> notasSorteadas = [];
-  String intervaloAtual = '';
   String respostaCorreta = '';
   String notaEscolhida = '';
   String respostaFinalDoUsuario = '';
-  String intervaloSelecionado = '';
   String acidenteEscolhido = ''; // Novo estado para o acidente escolhido
   final List<String> notasPossiveis = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
   final List<String> acidentesPossiveis = ['bb', 'b', '#', 'x'];
-  late List<Map<String, dynamic>> intervalosDisponiveis = [];
+  String intervaloAtual = '';
+  final List<String> intervalosPossiveis = [
+    '2m',
+    '2M',
+    '3m',
+    '3M',
+    '4J',
+    '4A',
+    '5d',
+    '5J',
+    '5A',
+    '6m',
+    '6M',
+    '7d',
+    '7m',
+    '7M'
+  ];
 
   late Timer _timer;
   int _contadorTempo = 0;
-  final int _maxTempo = 60;
+  final int _maxTempo = 10;
   int _contadorRespostas = 0;
-  final int _maxRespostas = 18;
-
-  bool _mostrarSessaoIntervalos = true;
 
   List<Map<String, dynamic>> _respostas = [];
+  bool tutorialFechado = false;
+  bool exercicioFinalizado = false;
 
   @override
   void initState() {
@@ -55,7 +67,12 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
                 textAlign: TextAlign.justify, style: TextStyle(fontSize: 16)),
             actions: [
               TextButton(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () => {
+                  Navigator.of(context).pop(),
+                  tutorialFechado = true,
+                  _gerarQuestao(),
+                  _startContador()
+                },
                 child: Text('Entendido'),
               ),
             ],
@@ -67,8 +84,7 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         _contadorTempo++;
-        if (_contadorTempo >= _maxTempo ||
-            _contadorRespostas >= _maxRespostas) {
+        if (_contadorTempo >= _maxTempo) {
           _stopContador();
           _onComplete();
         }
@@ -90,7 +106,7 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
     String wrongAnswersDetails = _respostas
         .where((answer) => !answer['isCorrect'])
         .map((answer) =>
-            "${answer['interval']} de ${answer['nota']} - Correto: ${answer['correta']} / Sua resposta: ${answer['usuario']}")
+            "${answer['interval']} de ${answer['nota']}. Correto: ${answer['correta']} | Resposta: ${answer['usuario']}")
         .join('\n');
 
     showDialog(
@@ -107,9 +123,8 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
                 setState(() {
                   _contadorTempo = 0;
                   _contadorRespostas = 0;
-                  intervaloSelecionado = '';
                   _respostas.clear();
-                  _mostrarSessaoIntervalos = true;
+                  exercicioFinalizado = true;
                 });
               },
               child: const Text('Ok'),
@@ -130,6 +145,8 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
       auxAcidentes = notasSustenidas;
     }
 
+    intervaloAtual = intervalosPossiveis
+        .elementAt(Random().nextInt(intervalosPossiveis.length));
     notaAtual =
         auxAcidentes.keys.elementAt(Random().nextInt(auxAcidentes.length));
 
@@ -139,7 +156,6 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
     }
 
     final intervalosPorNota = auxAcidentes[notaAtual]!;
-    intervaloAtual = intervaloSelecionado;
     respostaCorreta = intervalosPorNota[intervaloAtual]!;
     notasSorteadas.add(notaAtual);
 
@@ -173,14 +189,16 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
 
     setState(() {
       _contadorRespostas++;
-      if (_contadorRespostas >= _maxRespostas) {
-        _stopContador();
-        _onComplete();
-      } else {
-        notaEscolhida = ''; // Limpa a nota escolhida
-        acidenteEscolhido = ''; // Limpa o acidente escolhido
-        _gerarQuestao();
-      }
+
+      // Reseta o contador, zerando o tempo
+      _stopContador();
+      _contadorTempo = 0;
+      _startContador();
+
+      // Prepara para receber a proxima resposta
+      notaEscolhida = '';
+      acidenteEscolhido = '';
+      _gerarQuestao();
     });
   }
 
@@ -204,15 +222,16 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 20),
-              Text('Tempo: $_contadorTempo / $_maxTempo s'),
+              Container(child: Text('Tempo: $_contadorTempo / $_maxTempo s')),
               const SizedBox(height: 10),
-              Text('Respostas: $_contadorRespostas / $_maxRespostas'),
+              Container(child: Text('Respostas: $_contadorRespostas')),
               const SizedBox(height: 20),
-              Text(
-                '$intervaloAtual de $notaAtual',
-                style: const TextStyle(fontSize: 24),
-                textAlign: TextAlign.center,
+              Container(
+                child: Text(
+                  '$intervaloAtual de $notaAtual',
+                  style: const TextStyle(fontSize: 24),
+                  textAlign: TextAlign.center,
+                ),
               ),
               const SizedBox(height: 20),
               SizedBox(
@@ -220,7 +239,7 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
                 child: TextField(
                   readOnly: true,
                   decoration: const InputDecoration(
-                    hintText: 'Nota',
+                    hintText: '',
                     border: OutlineInputBorder(),
                   ),
                   controller: TextEditingController(
@@ -230,34 +249,47 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
                 ),
               ),
               const SizedBox(height: 20),
-              Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: notasPossiveis.map((notaMusical) {
-                  return ElevatedButton(
-                    onPressed: () => _selecionaNota(notaMusical),
-                    child: Text(notaMusical),
-                  );
-                }).toList(),
+              Container(
+                child: Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: notasPossiveis.map((notaMusical) {
+                    return ElevatedButton(
+                      onPressed: (exercicioFinalizado)
+                          ? null
+                          : () => _selecionaNota(notaMusical),
+                      child: Text(notaMusical),
+                    );
+                  }).toList(),
+                ),
               ),
               const SizedBox(height: 10),
-              Wrap(
-                spacing: 10,
-                children: acidentesPossiveis.map((accidental) {
-                  return ElevatedButton(
-                    onPressed: notaEscolhida.isEmpty
-                        ? null
-                        : () => _selecionaAcidente(accidental),
-                    child: Text(accidental),
-                  );
-                }).toList(),
+              Container(
+                child: Wrap(
+                  spacing: 10,
+                  children: acidentesPossiveis.map((accidental) {
+                    return ElevatedButton(
+                      onPressed: (notaEscolhida.isEmpty || exercicioFinalizado)
+                          ? null
+                          : () => _selecionaAcidente(accidental),
+                      child: Text(accidental),
+                    );
+                  }).toList(),
+                ),
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: (notaEscolhida.isEmpty) ? null : _submitResposta,
-                child: const Text('Submit'),
+              Container(
+                child: ElevatedButton(
+                  onPressed: (notaEscolhida.isEmpty || exercicioFinalizado)
+                      ? null
+                      : _submitResposta,
+                  child: const Text('Submeter'),
+                ),
               ),
-              const SizedBox(height: 100),
+              if (exercicioFinalizado)
+                Container(
+                    padding: EdgeInsets.only(top: 30),
+                    child: Text('Exercicio finalizado...'))
             ],
           ),
         ),

@@ -43,8 +43,8 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
   }
 
   Future<void> _mostrarDialogoTutorial() async {
-    final String tutorialTxt = await rootBundle
-        .loadString('data/tutoriais/intervalos/int_tutorial_desafio.txt');
+    final String tutorialTxt = await rootBundle.loadString(
+        'assets/data/tutoriais/intervalos/int_tutorial_desafio.txt');
 
     showDialog(
         context: context,
@@ -258,9 +258,9 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
       appBar: AppBar(
         title: const Text('Praticando Intervalos'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
+      body: Center(
+        child: Container(
+          padding: EdgeInsets.all(10),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -279,7 +279,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
                       final medalha = intervaloMap['medalha'];
 
                       return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 7.0),
+                        padding: const EdgeInsets.symmetric(vertical: 2),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

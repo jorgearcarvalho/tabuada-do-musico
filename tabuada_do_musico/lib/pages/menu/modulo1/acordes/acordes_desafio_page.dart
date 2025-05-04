@@ -60,7 +60,7 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
 
   Future<void> _mostrarDialogoTutorial() async {
     final String tutorialTxt = await rootBundle
-        .loadString('data/tutoriais/acordes/ac_tutorial_desafio.txt');
+        .loadString('assets/data/tutoriais/acordes/ac_tutorial_desafio.txt');
 
     showDialog(
         context: context,

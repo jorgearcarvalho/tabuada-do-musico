@@ -73,7 +73,7 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
 
   Future<void> _mostrarDialogoTutorial() async {
     final String tutorialTxt = await rootBundle
-        .loadString('data/tutoriais/acordes/ac_tutorial_livre.txt');
+        .loadString('assets/data/tutoriais/acordes/ac_tutorial_livre.txt');
 
     showDialog(
         context: context,

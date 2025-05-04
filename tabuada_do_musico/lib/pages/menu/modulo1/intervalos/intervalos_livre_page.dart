@@ -56,7 +56,7 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
 
   Future<void> _mostrarDialogoTutorial() async {
     final String tutorialTxt = await rootBundle
-        .loadString('data/tutoriais/intervalos/int_tutorial_livre.txt');
+        .loadString('assets/data/tutoriais/intervalos/int_tutorial_livre.txt');
 
     showDialog(
         context: context,

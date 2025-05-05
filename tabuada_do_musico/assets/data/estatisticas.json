@@ -142,13 +142,28 @@
             "mostrar_tutorial": true,
             "progresso": 0,
             "Maior": {
-                "medalha":0
+                "bloqueado": false,
+                "medalha": 0,
+                "tempo_atual": 0,
+                "melhor_tempo": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
             },
             "menor harmonica": {
-                "medalha":0
+                "bloqueado": true,
+                "medalha": 0,
+                "tempo_atual": 0,
+                "melhor_tempo": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
             },
             "menor melodica": {
-                "medalha":0
+                "bloqueado": true,
+                "medalha": 0,
+                "tempo_atual": 0,
+                "melhor_tempo": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
             }
         }
     }

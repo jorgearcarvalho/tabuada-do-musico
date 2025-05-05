@@ -106,7 +106,7 @@
                 "melhor_pontuacao": 0
             },
             "Aumentado e Suspenso": {
-                "bloqueado": false,
+                "bloqueado": true,
                 "medalha": 0,
                 "tempo_atual": 0,
                 "melhor_tempo": 0,

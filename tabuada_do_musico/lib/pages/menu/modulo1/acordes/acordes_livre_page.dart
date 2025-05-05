@@ -131,12 +131,12 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
 
   void iniciarNovoExercicio() {
     setState(() {
+      selecaoUsuario.clear();
       // Sorteia novos acordes
       List<Map<String, dynamic>> acordesSorteados = gerarAcordesAleatorios();
       acordeAtual =
           acordesSorteados.first; // Pega o primeiro acorde para o exercício
       iniciarTimer();
-      selecaoUsuario.clear();
     });
   }
 
@@ -160,16 +160,13 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
       return notaMap.values.first;
     }).toList();
 
-    print(selecaoUsuario);
-    print(notasCorretas);
-
     bool respostaCorreta = const SetEquality()
         .equals(selecaoUsuario.toSet(), notasCorretas.toSet());
     tentativas++;
     if (respostaCorreta) {
       acertos++;
       iniciarNovoExercicio();
-    } else if (!respostaCorreta) {
+    } else {
       acordesErrados += acordeAtual['nome'] + ' | ';
     }
   }
@@ -186,7 +183,6 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
             onPressed: () {
               Navigator.pop(context);
               iniciarNovoExercicio();
-              // iniciarTimer();
               acertos = 0;
               tentativas = 0;
               tempoRestante = 30;

@@ -35,6 +35,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
   bool _mostrarSessaoIntervalos = true;
 
   List<Map<String, dynamic>> _respostas = [];
+  bool _tutorialFinalizado = false;
 
   @override
   void initState() {
@@ -55,7 +56,12 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
                 textAlign: TextAlign.justify, style: TextStyle(fontSize: 16)),
             actions: [
               TextButton(
-                onPressed: () => Navigator.of(context).pop(),
+                onPressed: () {
+                  setState(() {
+                    _tutorialFinalizado = true;
+                  });
+                  Navigator.of(context).pop();
+                },
                 child: Text('Entendido'),
               ),
             ],
@@ -254,6 +260,12 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_tutorialFinalizado) {
+      return Scaffold(
+        appBar: AppBar(title: Text('Formação de Acordes')),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Praticando Intervalos'),

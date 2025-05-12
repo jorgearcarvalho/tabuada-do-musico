@@ -45,7 +45,7 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
   int _contadorRespostas = 0;
 
   List<Map<String, dynamic>> _respostas = [];
-  bool tutorialFechado = false;
+  bool _tutorialFinalizado = false;
   bool exercicioFinalizado = false;
 
   @override
@@ -68,8 +68,10 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
             actions: [
               TextButton(
                 onPressed: () => {
+                  setState(() {
+                    _tutorialFinalizado = true;
+                  }),
                   Navigator.of(context).pop(),
-                  tutorialFechado = true,
                   _gerarQuestao(),
                   _startContador()
                 },
@@ -212,6 +214,12 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_tutorialFinalizado) {
+      return Scaffold(
+        appBar: AppBar(title: Text('Formação de Acordes')),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Praticando Intervalos'),

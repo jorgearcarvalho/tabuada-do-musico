@@ -26,7 +26,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
   final List<String> acidentesPossiveis = ['bb', 'b', '#', 'x'];
   late List<Map<String, dynamic>> intervalosDisponiveis = [];
 
-  late Timer _timer;
+  Timer? _timer;
   int _contadorTempo = 0;
   final int _maxTempo = 60;
   int _contadorRespostas = 0;
@@ -121,8 +121,8 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
   }
 
   void _stopContador() {
-    if (_timer.isActive) {
-      _timer.cancel();
+    if (_timer?.isActive ?? false) {
+      _timer?.cancel();
     }
   }
 
@@ -252,9 +252,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
 
   @override
   void dispose() {
-    if (_timer.isActive) {
-      _timer.cancel();
-    }
+    _stopContador();
     super.dispose();
   }
 

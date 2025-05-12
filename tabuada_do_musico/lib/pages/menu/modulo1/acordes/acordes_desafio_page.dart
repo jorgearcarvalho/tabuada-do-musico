@@ -188,6 +188,11 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
     Random random = Random();
 
     for (int i = 0; i < 10; i++) {
+      if (i == 4) {
+        tonalidades +=
+            notasSustenidas.keys.toList() + notasBemois.keys.toList();
+      }
+
       String tonica = tonalidades[random.nextInt(tonalidades.length)];
       String tipo = tiposPermitidos[random.nextInt(tiposPermitidos.length)];
 

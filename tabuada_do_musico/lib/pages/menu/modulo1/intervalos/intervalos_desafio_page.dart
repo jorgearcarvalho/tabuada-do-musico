@@ -28,7 +28,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
 
   Timer? _timer;
   int _contadorTempo = 0;
-  final int _maxTempo = 60;
+  final int _maxTempo = 36;
   int _contadorRespostas = 0;
   final int _maxRespostas = 18;
 

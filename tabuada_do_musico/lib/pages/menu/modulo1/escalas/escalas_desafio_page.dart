@@ -28,6 +28,8 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
   Timer? timer;
   String escalasErradas = '';
 
+  bool _tutorialFinalizado = false;
+
   List<String> notasPossiveis = [
     'Cbb',
     'Cb',
@@ -125,7 +127,12 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => {
+              setState(() {
+                _tutorialFinalizado = true;
+              }),
+              Navigator.of(context).pop(),
+            },
             child: Text('Entendido'),
           ),
         ],
@@ -253,6 +260,13 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_tutorialFinalizado) {
+      return Scaffold(
+        appBar: AppBar(title: Text('Formação de Acordes')),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     if (!mostrarTelaExercicio) {
       return Scaffold(
         appBar: AppBar(title: Text('Desafio: Formação de Escalas')),

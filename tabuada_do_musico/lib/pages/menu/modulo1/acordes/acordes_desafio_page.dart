@@ -29,6 +29,8 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
   Timer? timer;
   String acordesErrados = '';
 
+  bool _tutorialFinalizado = false;
+
   final List<String> notasPossiveis = [
     'Cbb',
     'Cb',
@@ -126,7 +128,10 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => {
+              setState(() => _tutorialFinalizado = true),
+              Navigator.of(context).pop()
+            },
             child: Text('Entendido'),
           ),
         ],
@@ -264,6 +269,13 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_tutorialFinalizado) {
+      return Scaffold(
+        appBar: AppBar(title: Text('Formação de Acordes')),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     if (!mostrarTelaExercicio) {
       return Scaffold(
         appBar: AppBar(title: Text('Desafio: Formação de Acordes')),

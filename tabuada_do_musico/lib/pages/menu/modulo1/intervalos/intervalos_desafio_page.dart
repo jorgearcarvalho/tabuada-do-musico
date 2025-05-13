@@ -28,7 +28,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
 
   Timer? _timer;
   int _contadorTempo = 0;
-  final int _maxTempo = 60;
+  final int _maxTempo = 36;
   int _contadorRespostas = 0;
   final int _maxRespostas = 18;
 
@@ -153,6 +153,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
                   _contadorRespostas = 0;
                   intervaloSelecionado = '';
                   _respostas.clear();
+                  notasSorteadas.clear();
                   _mostrarSessaoIntervalos = true;
                 });
               },
@@ -165,24 +166,22 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
   }
 
   void _gerarQuestao() {
-    contadorIntervalosSorteados++;
-    Map<String, Map<String, String>> auxAcidentes = notasNaturais;
+    // Unir todos os mapas em um só
+    Map<String, Map<String, String>> todasNotas = {}
+      ..addAll(notasNaturais)
+      ..addAll(notasBemois)
+      ..addAll(notasSustenidas);
 
-    if (contadorIntervalosSorteados >= 6 && contadorIntervalosSorteados < 12) {
-      auxAcidentes = notasBemois;
-    } else if (contadorIntervalosSorteados >= 12) {
-      auxAcidentes = notasSustenidas;
-    }
+    // Sortear uma nota aleatória
+    notaAtual = todasNotas.keys.elementAt(Random().nextInt(todasNotas.length));
 
-    notaAtual =
-        auxAcidentes.keys.elementAt(Random().nextInt(auxAcidentes.length));
-
+    // Evitar repetição
     while (notasSorteadas.contains(notaAtual)) {
       notaAtual =
-          auxAcidentes.keys.elementAt(Random().nextInt(auxAcidentes.length));
+          todasNotas.keys.elementAt(Random().nextInt(todasNotas.length));
     }
 
-    final intervalosPorNota = auxAcidentes[notaAtual]!;
+    final intervalosPorNota = todasNotas[notaAtual]!;
     intervaloAtual = intervaloSelecionado;
     respostaCorreta = intervalosPorNota[intervaloAtual]!;
     notasSorteadas.add(notaAtual);

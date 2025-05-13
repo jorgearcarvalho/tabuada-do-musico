@@ -34,18 +34,15 @@ class _HomePageState extends State<HomePage> {
             Container(
               padding: EdgeInsets.only(left: 50, right: 50),
               child: Text(
-                  'Um aplicativo para auxiliar no \nseu estudo de teoria musical',
+                  'Um aplicativo para auxiliar no seu estudo de teoria musical',
                   style: TextStyle(fontSize: 20),
-                  textAlign: TextAlign.justify),
+                  textAlign: TextAlign.center),
             ),
             const SizedBox(height: 20),
-            Opacity(
-              opacity: 0.85,
-              child: Image.asset(
-                'assets/images/clave_de_sol_1.png',
-                width: 150,
-                height: 150,
-              ),
+            Image.asset(
+              'assets/images/clave_de_sol_1.png',
+              width: 150,
+              height: 150,
             ),
             const SizedBox(height: 20),
             ElevatedButton(

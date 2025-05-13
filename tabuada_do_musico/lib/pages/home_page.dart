@@ -39,10 +39,13 @@ class _HomePageState extends State<HomePage> {
                   textAlign: TextAlign.center),
             ),
             const SizedBox(height: 20),
-            Image.asset(
-              'assets/images/clave_de_sol_1.png',
-              width: 150,
-              height: 150,
+            Opacity(
+              opacity: 0.85,
+              child: Image.asset(
+                'assets/images/clave_de_sol_1.png',
+                width: 150,
+                height: 150,
+              ),
             ),
             const SizedBox(height: 20),
             ElevatedButton(

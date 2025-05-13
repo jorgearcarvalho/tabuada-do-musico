@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
             Container(
               padding: EdgeInsets.only(left: 50, right: 50),
               child: Text(
-                  'Um aplicativo para auxiliar no seu estudo de teoria musical',
+                  'Um aplicativo para auxiliar seu estudo de teoria musical',
                   style: TextStyle(fontSize: 20),
                   textAlign: TextAlign.center),
             ),

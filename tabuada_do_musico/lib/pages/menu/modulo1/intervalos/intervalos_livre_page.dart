@@ -116,8 +116,10 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Fim do exercício'),
-          content: Text(
-              'Você completou o exercício!\n\nAcertos: $correctAnswers\nErros: $incorrectAnswers\n\nErros Detalhados:\n$wrongAnswersDetails'),
+          content: SingleChildScrollView(
+            child: Text(
+                'Você completou o exercício!\n\nAcertos: $correctAnswers\nErros: $incorrectAnswers\n\nErros Detalhados:\n$wrongAnswersDetails'),
+          ),
           actions: [
             TextButton(
               onPressed: () {
@@ -139,25 +141,17 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
 
   void _gerarQuestao() {
     contadorIntervalosSorteados++;
-    Map<String, Map<String, String>> auxAcidentes = notasNaturais;
-
-    if (contadorIntervalosSorteados >= 6 && contadorIntervalosSorteados < 12) {
-      auxAcidentes = notasBemois;
-    } else if (contadorIntervalosSorteados >= 12) {
-      auxAcidentes = notasSustenidas;
-    }
+    Map<String, Map<String, String>> todasAsNotas = {}
+      ..addAll(notasNaturais)
+      ..addAll(notasBemois)
+      ..addAll(notasSustenidas);
 
     intervaloAtual = intervalosPossiveis
         .elementAt(Random().nextInt(intervalosPossiveis.length));
     notaAtual =
-        auxAcidentes.keys.elementAt(Random().nextInt(auxAcidentes.length));
+        todasAsNotas.keys.elementAt(Random().nextInt(todasAsNotas.length));
 
-    while (notasSorteadas.contains(notaAtual)) {
-      notaAtual =
-          auxAcidentes.keys.elementAt(Random().nextInt(auxAcidentes.length));
-    }
-
-    final intervalosPorNota = auxAcidentes[notaAtual]!;
+    final intervalosPorNota = todasAsNotas[notaAtual]!;
     respostaCorreta = intervalosPorNota[intervaloAtual]!;
     notasSorteadas.add(notaAtual);
 

@@ -260,8 +260,9 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
       context: context,
       builder: (_) => AlertDialog(
         title: Text('Resultado'),
-        content:
-            Text('Pontuação: $acertos/$tentativas\nErros: $acordesErrados'),
+        content: SingleChildScrollView(
+            child: Text(
+                'Pontuação: $acertos/$tentativas\nErros: $acordesErrados')),
       ),
     );
   }

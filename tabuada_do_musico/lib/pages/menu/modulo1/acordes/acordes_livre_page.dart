@@ -176,8 +176,10 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Fim do tempo!'),
-        content: Text(
-            'Pontuação: $acertos/$tentativas tentativas.\nErros: $acordesErrados'),
+        content: SingleChildScrollView(
+          child: Text(
+              'Pontuação: $acertos/$tentativas tentativas.\nErros: $acordesErrados'),
+        ),
         actions: [
           TextButton(
             onPressed: () {

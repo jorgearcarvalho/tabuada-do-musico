@@ -142,8 +142,10 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Fim do exercício'),
-          content: Text(
-              'Você completou o exercício!\n\nAcertos: $correctAnswers\nErros: $incorrectAnswers\n\nErros Detalhados:\n$wrongAnswersDetails'),
+          content: SingleChildScrollView(
+            child: Text(
+                'Você completou o exercício!\n\nAcertos: $correctAnswers\nErros: $incorrectAnswers\n\nErros Detalhados:\n$wrongAnswersDetails'),
+          ),
           actions: [
             TextButton(
               onPressed: () {

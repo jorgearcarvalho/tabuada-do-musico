@@ -171,8 +171,10 @@ class _EscalasLivrePageState extends State<EscalasLivrePage> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Fim do tempo!'),
-        content: Text(
-            'Pontuação: $acertos/$tentativas tentativas.\nErros: $escalasErradas'),
+        content: SingleChildScrollView(
+          child: Text(
+              'Pontuação: $acertos/$tentativas tentativas.\nErros: $escalasErradas'),
+        ),
         actions: [
           TextButton(
             onPressed: () {

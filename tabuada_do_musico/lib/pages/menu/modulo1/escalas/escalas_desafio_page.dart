@@ -246,8 +246,9 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
       context: context,
       builder: (_) => AlertDialog(
         title: Text('Resultado'),
-        content:
-            Text('Pontuação: $acertos/$tentativas\nErros: $escalasErradas'),
+        content: SingleChildScrollView(
+            child: Text(
+                'Pontuação: $acertos/$tentativas\nErros: $escalasErradas')),
       ),
     );
   }

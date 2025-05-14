@@ -14,7 +14,7 @@
                 "melhor_pontuacao": 0
             },
             "2M": {
-                "bloqueado": false,
+                "bloqueado": true,
                 "medalha": 0,
                 "tempo_atual": 0,
                 "melhor_tempo": 0,

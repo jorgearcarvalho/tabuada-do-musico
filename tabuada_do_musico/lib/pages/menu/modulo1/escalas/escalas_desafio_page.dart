@@ -1,5 +1,5 @@
-// Arquivo: escala_desafio_page.dart
-
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
@@ -75,8 +75,10 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
   }
 
   Future<void> _carregarEstatisticas() async {
-    final String resposta =
-        await rootBundle.loadString('assets/data/estatisticas.json');
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/TDM_estatisticas.json');
+
+    final String resposta = await file.readAsString();
     final Map<String, dynamic> data = json.decode(resposta);
 
     final bool mostrarTutorial =

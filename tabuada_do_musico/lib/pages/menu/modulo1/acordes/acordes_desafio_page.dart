@@ -1,9 +1,11 @@
+import 'dart:io';
 import 'dart:convert';
 import 'dart:math';
 import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:tcc_app/database/tonalidades/bemois.dart';
 import 'package:tcc_app/database/tonalidades/naturais.dart';
 import 'package:tcc_app/database/tonalidades/sustenidos.dart';
@@ -76,8 +78,10 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
   }
 
   Future<void> _carregarEstatisticas() async {
-    final String resposta =
-        await rootBundle.loadString('assets/data/estatisticas.json');
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/TDM_estatisticas.json');
+
+    final String resposta = await file.readAsString();
     final Map<String, dynamic> data = json.decode(resposta);
 
     final bool mostrarTutorial =

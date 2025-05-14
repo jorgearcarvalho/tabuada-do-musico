@@ -1,3 +1,5 @@
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:tcc_app/database/tonalidades/bemois.dart';
@@ -70,8 +72,10 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
   }
 
   Future<void> _carregarIntervalos() async {
-    final String response =
-        await rootBundle.loadString('assets/data/estatisticas.json');
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/TDM_estatisticas.json');
+
+    final String response = await file.readAsString();
     final Map<String, dynamic> data = json.decode(response);
 
     final bool mostrarTutorial =
@@ -107,6 +111,43 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
     }
   }
 
+  Color _retornaMedalhaCor(int medalha) {
+    switch (medalha) {
+      case 3:
+        return Colors.amber;
+      case 2:
+        return Colors.grey;
+      case 1:
+        return Colors.brown;
+      default:
+        return Colors.grey.withOpacity(0.3);
+    }
+  }
+
+  double calcularProgressoGeral() {
+    if (intervalosDisponiveis.isEmpty) return 0.0;
+
+    double soma = 0;
+    for (var intervalo in intervalosDisponiveis) {
+      int medalha = intervalo['medalha'] ?? 0;
+      switch (medalha) {
+        case 3:
+          soma += 100;
+          break;
+        case 2:
+          soma += 75;
+          break;
+        case 1:
+          soma += 50;
+          break;
+        default:
+          soma += 0;
+      }
+    }
+
+    return soma / intervalosDisponiveis.length / 100; // valor entre 0.0 e 1.0
+  }
+
   void _startContador() {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
@@ -114,7 +155,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
         if (_contadorTempo >= _maxTempo ||
             _contadorRespostas >= _maxRespostas) {
           _stopContador();
-          _onComplete();
+          _finalizarExercicio();
         }
       });
     });
@@ -124,47 +165,6 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
     if (_timer?.isActive ?? false) {
       _timer?.cancel();
     }
-  }
-
-  void _onComplete() {
-    int correctAnswers =
-        _respostas.where((answer) => answer['isCorrect']).length;
-    int incorrectAnswers = _respostas.length - correctAnswers;
-
-    String wrongAnswersDetails = _respostas
-        .where((answer) => !answer['isCorrect'])
-        .map((answer) =>
-            "${answer['interval']} de ${answer['nota']} - Correto: ${answer['correta']} / Sua resposta: ${answer['usuario']}")
-        .join('\n');
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Fim do exercício'),
-          content: SingleChildScrollView(
-            child: Text(
-                'Você completou o exercício!\n\nAcertos: $correctAnswers\nErros: $incorrectAnswers\n\nErros Detalhados:\n$wrongAnswersDetails'),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                setState(() {
-                  _contadorTempo = 0;
-                  _contadorRespostas = 0;
-                  intervaloSelecionado = '';
-                  _respostas.clear();
-                  notasSorteadas.clear();
-                  _mostrarSessaoIntervalos = true;
-                });
-              },
-              child: const Text('Ok'),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   void _gerarQuestao() {
@@ -204,7 +204,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
     });
   }
 
-  void _submitResposta() {
+  void _submeterResposta() {
     final respostaDoUsuario = notaEscolhida + acidenteEscolhido;
     final isCorreto = respostaDoUsuario == respostaCorreta;
 
@@ -220,7 +220,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
       _contadorRespostas++;
       if (_contadorRespostas >= _maxRespostas) {
         _stopContador();
-        _onComplete();
+        _finalizarExercicio();
       } else {
         notaEscolhida = ''; // Limpa a nota escolhida
         acidenteEscolhido = ''; // Limpa o acidente escolhido
@@ -238,17 +238,45 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
     });
   }
 
-  Color _retornaMedalhaCor(int medalha) {
-    switch (medalha) {
-      case 3:
-        return Colors.amber;
-      case 2:
-        return Colors.grey;
-      case 1:
-        return Colors.brown;
-      default:
-        return Colors.grey.withOpacity(0.3);
-    }
+  void _finalizarExercicio() {
+    int correctAnswers =
+        _respostas.where((answer) => answer['isCorrect']).length;
+    int incorrectAnswers = _respostas.length - correctAnswers;
+
+    String wrongAnswersDetails = _respostas
+        .where((answer) => !answer['isCorrect'])
+        .map((answer) =>
+            "${answer['interval']} de ${answer['nota']} - Correto: ${answer['correta']} / Sua resposta: ${answer['usuario']}")
+        .join('\n');
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Fim do exercício'),
+          content: SingleChildScrollView(
+            child: Text(
+                'Você completou o exercício!\n\nAcertos: $correctAnswers\nErros: $incorrectAnswers\n\nErros Detalhados:\n$wrongAnswersDetails'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  _contadorTempo = 0;
+                  _contadorRespostas = 0;
+                  intervaloSelecionado = '';
+                  _respostas.clear();
+                  notasSorteadas.clear();
+                  _mostrarSessaoIntervalos = true;
+                });
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -318,15 +346,15 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
                             height: 8,
                             width: 150,
                             child: LinearProgressIndicator(
-                              value: _contadorRespostas / _maxRespostas,
+                              value: calcularProgressoGeral(),
                               minHeight: 8,
                               backgroundColor: Colors.grey[300],
                               color: Colors.blue,
                             )),
                         SizedBox(height: 5),
                         Text(
-                          'Progresso',
-                          style: const TextStyle(fontSize: 16),
+                          'Progresso: ${(calcularProgressoGeral() * 100).toStringAsFixed(0)}%',
+                          style: const TextStyle(fontSize: 14),
                         ),
                       ],
                     )),
@@ -383,7 +411,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: (notaEscolhida.isEmpty) ? null : _submitResposta,
+                  onPressed: (notaEscolhida.isEmpty) ? null : _submeterResposta,
                   child: const Text('Submit'),
                 ),
                 const SizedBox(height: 100),

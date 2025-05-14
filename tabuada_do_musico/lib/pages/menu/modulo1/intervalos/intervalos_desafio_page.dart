@@ -30,7 +30,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
 
   Timer? _timer;
   int _contadorTempo = 0;
-  final int _maxTempo = 36;
+  final int _maxTempo = 60;
   int _contadorRespostas = 0;
   final int _maxRespostas = 18;
 
@@ -42,6 +42,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
   @override
   void initState() {
     super.initState();
+    _mostrarDialogoTutorial();
     _carregarIntervalos();
   }
 
@@ -69,6 +70,69 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
             ],
           );
         });
+  }
+
+  Future<void> _atualizarEstatisticasNoJSON() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/TDM_estatisticas.json');
+
+    if (!await file.exists()) return;
+
+    final String content = await file.readAsString();
+    final Map<String, dynamic> data = json.decode(content);
+
+    final Map<String, dynamic> intervalosData =
+        data['estatisticas']['intervalos'];
+
+    // Calcula a pontuação do usuário
+    int acertos = _respostas.where((res) => res['isCorrect']).length;
+    double pontuacaoFinal = (acertos / _maxRespostas) * 100;
+    int medalhaObtida = _entregarMedalha(pontuacaoFinal);
+
+    final Map<String, dynamic> intervaloAtualData =
+        intervalosData[intervaloSelecionado];
+
+    // Atualiza dados se existir
+    if (intervaloAtualData != null) {
+      intervaloAtualData['tempo_atual'] = _contadorTempo;
+      intervaloAtualData['pontuacao_atual'] = pontuacaoFinal.toInt();
+
+      // Atualiza melhor pontuação/tempo se for o caso
+      if (pontuacaoFinal > intervaloAtualData['melhor_pontuacao']) {
+        intervaloAtualData['melhor_pontuacao'] = pontuacaoFinal.toInt();
+      }
+
+      if (_contadorTempo < intervaloAtualData['melhor_tempo'] ||
+          intervaloAtualData['melhor_tempo'] == 0) {
+        intervaloAtualData['melhor_tempo'] = _contadorTempo;
+      }
+
+      // Atualiza medalha se for melhor
+      if (medalhaObtida > intervaloAtualData['medalha']) {
+        intervaloAtualData['medalha'] = medalhaObtida;
+      }
+
+      // Desbloqueia o próximo intervalo se houver
+      List<String> chaves = intervalosData.keys
+          .where((key) =>
+              key != 'mostrar_tutorial' &&
+              key != 'notas_possiveis' &&
+              key != 'acidentes_possiveis')
+          .toList();
+
+      int atualIndex = chaves.indexOf(intervaloSelecionado);
+      if (atualIndex != -1 &&
+          atualIndex < chaves.length - 1 &&
+          medalhaObtida >= 2) {
+        final proximoIntervalo = chaves[atualIndex + 1];
+        if (intervalosData[proximoIntervalo] != null) {
+          intervalosData[proximoIntervalo]['bloqueado'] = false;
+        }
+      }
+    }
+
+    // Escreve de volta o JSON atualizado
+    await file.writeAsString(JsonEncoder.withIndent('  ').convert(data));
   }
 
   Future<void> _carregarIntervalos() async {
@@ -104,24 +168,11 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
       intervalosDisponiveis = intervalos;
     });
 
-    if (mostrarTutorial) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _mostrarDialogoTutorial();
-      });
-    }
-  }
-
-  Color _retornaMedalhaCor(int medalha) {
-    switch (medalha) {
-      case 3:
-        return Colors.amber;
-      case 2:
-        return Colors.grey;
-      case 1:
-        return Colors.brown;
-      default:
-        return Colors.grey.withOpacity(0.3);
-    }
+    // if (mostrarTutorial) {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     _mostrarDialogoTutorial();
+    //   });
+    // }
   }
 
   double calcularProgressoGeral() {
@@ -146,6 +197,29 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
     }
 
     return soma / intervalosDisponiveis.length / 100; // valor entre 0.0 e 1.0
+  }
+
+  Color _retornaMedalhaCor(int medalha) {
+    switch (medalha) {
+      case 3:
+        return Colors.amber;
+      case 2:
+        return Colors.grey;
+      case 1:
+        return Colors.brown;
+      default:
+        return Colors.grey.withOpacity(0.3);
+    }
+  }
+
+  int _entregarMedalha(double pontuacaoFinal) {
+    if (pontuacaoFinal >= 50 && pontuacaoFinal < 70) return 1;
+
+    if (pontuacaoFinal >= 70 && pontuacaoFinal < 90) return 2;
+
+    if (pontuacaoFinal >= 90) return 3;
+
+    return 0;
   }
 
   void _startContador() {
@@ -238,7 +312,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
     });
   }
 
-  void _finalizarExercicio() {
+  Future<void> _finalizarExercicio() async {
     int correctAnswers =
         _respostas.where((answer) => answer['isCorrect']).length;
     int incorrectAnswers = _respostas.length - correctAnswers;
@@ -248,6 +322,9 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
         .map((answer) =>
             "${answer['interval']} de ${answer['nota']} - Correto: ${answer['correta']} / Sua resposta: ${answer['usuario']}")
         .join('\n');
+
+    await _atualizarEstatisticasNoJSON();
+    await _carregarIntervalos();
 
     showDialog(
       context: context,
@@ -312,30 +389,42 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
                 const SizedBox(height: 20),
                 Column(
                   children: [
-                    ...intervalosDisponiveis.map((intervaloMap) {
-                      final nome = intervaloMap['nome'];
-                      final bloqueado = intervaloMap['bloqueado'] as bool;
-                      final medalha = intervaloMap['medalha'];
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: intervalosDisponiveis.map((intervaloMap) {
+                        final nome = intervaloMap['nome'];
+                        final bloqueado = intervaloMap['bloqueado'] as bool;
+                        final medalha = intervaloMap['medalha'];
 
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (!bloqueado)
-                              Icon(Icons.emoji_events,
-                                  color: _retornaMedalhaCor(medalha), size: 24),
-                            const SizedBox(width: 5),
-                            ElevatedButton(
-                              onPressed: bloqueado
-                                  ? null
-                                  : () => _selecionaIntervalo(nome),
-                              child: Text(nome),
-                            )
-                          ],
-                        ),
-                      );
-                    }).toList(),
+                        return SizedBox(
+                          width: MediaQuery.of(context).size.width / 2 - 50,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (medalha > 0)
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 6),
+                                  child: Icon(
+                                    Icons.emoji_events,
+                                    color: _retornaMedalhaCor(medalha),
+                                    size: 20,
+                                  ),
+                                ),
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: bloqueado
+                                      ? null
+                                      : () => _selecionaIntervalo(nome),
+                                  child:
+                                      Text(nome, textAlign: TextAlign.center),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
                     SizedBox(
                       height: 20,
                     ),

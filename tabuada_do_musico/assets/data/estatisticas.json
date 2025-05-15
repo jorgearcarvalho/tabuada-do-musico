@@ -45,7 +45,15 @@
                 "pontuacao_atual": 0,
                 "melhor_pontuacao": 0
             },
-            "4A | 5d": {
+            "4A": {
+                "bloqueado": true,
+                "medalha": 0,
+                "tempo_atual": 0,
+                "melhor_tempo": 0,
+                "pontuacao_atual": 0,
+                "melhor_pontuacao": 0
+            },
+            "5d": {
                 "bloqueado": true,
                 "medalha": 0,
                 "tempo_atual": 0,

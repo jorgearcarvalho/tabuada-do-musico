@@ -255,11 +255,17 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Identifique as notas do acorde: ${acordeAtual['nome']}',
+                  'Notas do acorde: ${acordeAtual['nome']}',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 10),
-                Text('Tempo restante: $tempoRestante segundos'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Tempo: ${tempoRestante}s '),
+                    Text('| Respostas: $tentativas'),
+                  ],
+                ),
                 SizedBox(height: 10),
                 Container(
                   // height: alturaDisponivel * 0.7,

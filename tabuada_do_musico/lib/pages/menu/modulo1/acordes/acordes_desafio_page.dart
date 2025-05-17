@@ -75,6 +75,34 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
   void initState() {
     super.initState();
     _carregarEstatisticas();
+    _mostrarDialogoTutorial();
+  }
+
+  Future<void> _mostrarDialogoTutorial() async {
+    final String tutorialTxt = await rootBundle
+        .loadString('assets/data/tutoriais/acordes/ac_tutorial_desafio.txt');
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        title: Text('Tutorial'),
+        content: Text(
+          tutorialTxt,
+          textAlign: TextAlign.justify,
+          style: TextStyle(fontSize: 16),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => {
+              setState(() => _tutorialFinalizado = true),
+              Navigator.of(context).pop()
+            },
+            child: Text('Entendido'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _carregarEstatisticas() async {
@@ -110,38 +138,11 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
       exerciciosDisponiveis = acordesStats;
     });
 
-    if (mostrarTutorial) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _mostrarDialogoTutorial();
-      });
-    }
-  }
-
-  Future<void> _mostrarDialogoTutorial() async {
-    final String tutorialTxt = await rootBundle
-        .loadString('assets/data/tutoriais/acordes/ac_tutorial_desafio.txt');
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => AlertDialog(
-        title: Text('Tutorial'),
-        content: Text(
-          tutorialTxt,
-          textAlign: TextAlign.justify,
-          style: TextStyle(fontSize: 16),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => {
-              setState(() => _tutorialFinalizado = true),
-              Navigator.of(context).pop()
-            },
-            child: Text('Entendido'),
-          ),
-        ],
-      ),
-    );
+    // if (mostrarTutorial) {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     _mostrarDialogoTutorial();
+    //   });
+    // }
   }
 
   Color _retornaMedalhaCor(int medalha) {
@@ -341,7 +342,13 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 10),
-                Text('Tempo restante: $tempoMaximo segundos'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Tempo: ${tempoMaximo}s '),
+                    Text('| Respostas: $tentativas/$numQuestoes'),
+                  ],
+                ),
                 SizedBox(height: 10),
                 Container(
                   width: largura * 0.8,
@@ -404,9 +411,9 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
                 ],
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: verificarResposta,
-                  child: Text('Submeter'),
-                )
+                    onPressed: verificarResposta,
+                    child: Text(
+                        tentativas == numQuestoes ? 'Finalizar' : 'Submeter'))
               ],
             ),
           );

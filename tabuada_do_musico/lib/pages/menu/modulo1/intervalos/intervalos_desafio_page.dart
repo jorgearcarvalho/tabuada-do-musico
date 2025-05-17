@@ -73,6 +73,46 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
         });
   }
 
+  Future<void> _carregarIntervalos() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/TDM_estatisticas.json');
+
+    final String response = await file.readAsString();
+    final Map<String, dynamic> data = json.decode(response);
+
+    final bool mostrarTutorial =
+        data['estatisticas']['intervalos']['mostrar_tutorial'];
+
+    final Map<String, dynamic> intervalosRaw =
+        data['estatisticas']['intervalos'];
+
+    final List<Map<String, dynamic>> intervalos = [];
+
+    intervalosRaw.forEach((key, value) {
+      if (value is Map<String, dynamic> && value.containsKey('bloqueado')) {
+        intervalos.add({
+          'nome': key,
+          'bloqueado': value['bloqueado'],
+          'medalha': value['medalha'],
+          "tempo_atual": value['tempo_atual'],
+          "melhor_tempo": value['melhor_tempo'],
+          "pontuacao_atual": value['pontuacao_atual'],
+          "melhor_pontuacao": value['melhor_pontuacao'],
+        });
+      }
+    });
+
+    setState(() {
+      intervalosDisponiveis = intervalos;
+    });
+
+    // if (mostrarTutorial) {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     _mostrarDialogoTutorial();
+    //   });
+    // }
+  }
+
   Future<void> _atualizarEstatisticasNoJSON() async {
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/TDM_estatisticas.json');
@@ -134,46 +174,6 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
 
     // Escreve de volta o JSON atualizado
     await file.writeAsString(JsonEncoder.withIndent('  ').convert(data));
-  }
-
-  Future<void> _carregarIntervalos() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/TDM_estatisticas.json');
-
-    final String response = await file.readAsString();
-    final Map<String, dynamic> data = json.decode(response);
-
-    final bool mostrarTutorial =
-        data['estatisticas']['intervalos']['mostrar_tutorial'];
-
-    final Map<String, dynamic> intervalosRaw =
-        data['estatisticas']['intervalos'];
-
-    final List<Map<String, dynamic>> intervalos = [];
-
-    intervalosRaw.forEach((key, value) {
-      if (value is Map<String, dynamic> && value.containsKey('bloqueado')) {
-        intervalos.add({
-          'nome': key,
-          'bloqueado': value['bloqueado'],
-          'medalha': value['medalha'],
-          "tempo_atual": value['tempo_atual'],
-          "melhor_tempo": value['melhor_tempo'],
-          "pontuacao_atual": value['pontuacao_atual'],
-          "melhor_pontuacao": value['melhor_pontuacao'],
-        });
-      }
-    });
-
-    setState(() {
-      intervalosDisponiveis = intervalos;
-    });
-
-    // if (mostrarTutorial) {
-    //   WidgetsBinding.instance.addPostFrameCallback((_) {
-    //     _mostrarDialogoTutorial();
-    //   });
-    // }
   }
 
   double calcularProgressoGeral() {
@@ -452,15 +452,19 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
                   ],
                 ),
               ] else ...[
-                const SizedBox(height: 20),
-                Text('Tempo: $_contadorTempo / $_maxTempo s'),
-                const SizedBox(height: 10),
-                Text('Respostas: $_contadorRespostas / $_maxRespostas'),
-                const SizedBox(height: 20),
                 Text(
                   '$intervaloAtual de $notaAtual',
-                  style: const TextStyle(fontSize: 24),
+                  style: const TextStyle(
+                      fontSize: 24, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Tempo: ${_contadorTempo} / ${_maxTempo}s '),
+                    Text('| Respostas: $_contadorRespostas / $_maxRespostas'),
+                  ],
                 ),
                 const SizedBox(height: 20),
                 SizedBox(
@@ -468,7 +472,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
                   child: TextField(
                     readOnly: true,
                     decoration: const InputDecoration(
-                      hintText: 'Nota',
+                      hintText: '',
                       border: OutlineInputBorder(),
                     ),
                     controller: TextEditingController(

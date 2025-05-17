@@ -123,6 +123,7 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
 
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (_) => AlertDialog(
         title: Text('Tutorial'),
         content: Text(
@@ -262,6 +263,7 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
   void mostrarResultado() {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (_) => AlertDialog(
         title: Text('Resultado'),
         content: SingleChildScrollView(
@@ -403,7 +405,7 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: verificarResposta,
-                  child: Text('Verificar Resposta'),
+                  child: Text('Submeter'),
                 )
               ],
             ),

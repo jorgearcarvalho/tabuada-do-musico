@@ -120,6 +120,7 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
 
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (_) => AlertDialog(
         title: Text('Tutorial'),
         content: Text(
@@ -246,6 +247,7 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
   void mostrarResultado() {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (_) => AlertDialog(
         title: Text('Resultado'),
         content: SingleChildScrollView(
@@ -348,7 +350,7 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: verificarResposta,
-              child: Text('Verificar Resposta'),
+              child: Text('Submeter'),
             )
           ],
         ),

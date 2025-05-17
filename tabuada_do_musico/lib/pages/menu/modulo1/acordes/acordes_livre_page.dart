@@ -77,6 +77,7 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
 
     showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Tutorial'),
@@ -168,12 +169,29 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
       iniciarNovoExercicio();
     } else {
       acordesErrados += acordeAtual['nome'] + ' | ';
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            Future.delayed(Duration(seconds: 1), () {
+              Navigator.of(context).pop(true);
+            });
+            return AlertDialog(
+              insetPadding: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width / 4),
+              content: SizedBox(
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [Text('Errou! '), Icon(Icons.error_outline)])),
+            );
+          });
     }
   }
 
   void mostrarResultado() {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text('Fim do tempo!'),
         content: SingleChildScrollView(
@@ -298,7 +316,7 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: verificarResposta,
-                  child: Text('Verificar Resposta'),
+                  child: Text('Verificar resposta'),
                 ),
               ],
             ),

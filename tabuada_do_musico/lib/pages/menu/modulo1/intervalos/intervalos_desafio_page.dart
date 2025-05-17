@@ -52,6 +52,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
 
     showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Tutorial'),
@@ -328,6 +329,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
 
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Fim do exercício'),

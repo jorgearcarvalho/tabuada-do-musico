@@ -77,6 +77,7 @@ class _EscalasLivrePageState extends State<EscalasLivrePage> {
 
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Tutorial'),
@@ -169,6 +170,7 @@ class _EscalasLivrePageState extends State<EscalasLivrePage> {
   void mostrarResultado() {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text('Fim do tempo!'),
         content: SingleChildScrollView(
@@ -292,7 +294,7 @@ class _EscalasLivrePageState extends State<EscalasLivrePage> {
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: verificarResposta,
-                  child: Text('Verificar Resposta'),
+                  child: Text('Submeter'),
                 ),
               ],
             ),

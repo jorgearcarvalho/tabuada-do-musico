@@ -166,26 +166,42 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
     tentativas++;
     if (respostaCorreta) {
       acertos++;
+      alertaSubmeterResposta('Correto!');
       iniciarNovoExercicio();
     } else {
-      acordesErrados += acordeAtual['nome'] + ' | ';
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) {
-            Future.delayed(Duration(seconds: 1), () {
-              Navigator.of(context).pop(true);
-            });
-            return AlertDialog(
-              insetPadding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width / 4),
-              content: SizedBox(
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [Text('Errou! '), Icon(Icons.error_outline)])),
-            );
-          });
+      if (acordesErrados.isEmpty) {
+        acordesErrados = acordeAtual['nome'];
+      } else {
+        if (!acordesErrados.contains(acordeAtual['nome'])) {
+          acordesErrados += ', ' + acordeAtual['nome'];
+        }
+      }
+      alertaSubmeterResposta('Errou!');
     }
+  }
+
+  void alertaSubmeterResposta(String mensagem) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          Future.delayed(Duration(seconds: 1), () {
+            Navigator.of(context).pop(true);
+          });
+          return AlertDialog(
+            insetPadding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width / 4),
+            content: SizedBox(
+                child:
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Text(mensagem + ' '),
+              if (mensagem.contains('Errou'))
+                Icon(Icons.close)
+              else
+                Icon(Icons.check_circle)
+            ])),
+          );
+        });
   }
 
   void mostrarResultado() {
@@ -196,7 +212,7 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
         title: Text('Fim do tempo!'),
         content: SingleChildScrollView(
           child: Text(
-              'Pontuação: $acertos/$tentativas tentativas.\nErros: $acordesErrados'),
+              'Pontuação: $acertos/$tentativas tentativas.\nEstude os acordes: $acordesErrados'),
         ),
         actions: [
           TextButton(

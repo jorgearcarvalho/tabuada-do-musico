@@ -40,7 +40,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: ^0.13.1 
+  flutter_launcher_icons: ^0.13.1
+  path_provider: ^2.0.3
+  json_annotation: ^4.4.0
 
 flutter_icons:
   android: true

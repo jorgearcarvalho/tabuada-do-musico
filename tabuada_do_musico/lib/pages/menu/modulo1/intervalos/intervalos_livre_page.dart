@@ -60,6 +60,7 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
 
     showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Tutorial'),
@@ -113,6 +114,7 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
 
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Fim do exercício'),
@@ -224,16 +226,19 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(child: Text('Tempo: $_contadorTempo / $_maxTempo s')),
+              Text(
+                '$intervaloAtual de $notaAtual',
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 10),
-              Container(child: Text('Respostas: $_contadorRespostas')),
-              const SizedBox(height: 20),
-              Container(
-                child: Text(
-                  '$intervaloAtual de $notaAtual',
-                  style: const TextStyle(fontSize: 24),
-                  textAlign: TextAlign.center,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Tempo: ${_contadorTempo} / ${_maxTempo}s '),
+                  Text('| Respostas: $_contadorRespostas'),
+                ],
               ),
               const SizedBox(height: 20),
               SizedBox(

@@ -1,9 +1,11 @@
+import 'dart:io';
 import 'dart:convert';
 import 'dart:math';
 import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:tcc_app/database/tonalidades/bemois.dart';
 import 'package:tcc_app/database/tonalidades/naturais.dart';
 import 'package:tcc_app/database/tonalidades/sustenidos.dart';
@@ -19,17 +21,23 @@ class AcordesDesafioPage extends StatefulWidget {
 class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
   late List<Map<String, dynamic>> exerciciosDisponiveis = [];
   bool mostrarTelaExercicio = false;
-  String tipoSelecionado = '';
+  String exercicioAcordeTipoSelecionado = '';
   Map<String, dynamic> acordeAtual = {};
   List<String> selecaoUsuario = [];
   int acertos = 0;
   int tentativas = 0;
-  int numQuestoes = 8;
-  int tempoMaximo = 32;
+  int numQuestoes = 10;
+  int tempoMaximo = 50;
+  int _contadorTempo = 0;
   Timer? timer;
   String acordesErrados = '';
 
+  List<Map<String, dynamic>>? acordesGerados = null;
+
+  double _pontuacaoFinal = 0;
+
   bool _tutorialFinalizado = false;
+  bool _exercicioFinalizado = false;
 
   final List<String> notasPossiveis = [
     'Cbb',
@@ -73,11 +81,41 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
   void initState() {
     super.initState();
     _carregarEstatisticas();
+    _mostrarDialogoTutorial();
+  }
+
+  Future<void> _mostrarDialogoTutorial() async {
+    final String tutorialTxt = await rootBundle
+        .loadString('assets/data/tutoriais/acordes/ac_tutorial_desafio.txt');
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        title: Text('Tutorial'),
+        content: Text(
+          tutorialTxt,
+          textAlign: TextAlign.justify,
+          style: TextStyle(fontSize: 16),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => {
+              setState(() => _tutorialFinalizado = true),
+              Navigator.of(context).pop()
+            },
+            child: Text('Entendido'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _carregarEstatisticas() async {
-    final String resposta =
-        await rootBundle.loadString('assets/data/estatisticas.json');
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/TDM_estatisticas.json');
+
+    final String resposta = await file.readAsString();
     final Map<String, dynamic> data = json.decode(resposta);
 
     final bool mostrarTutorial =
@@ -106,37 +144,66 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
       exerciciosDisponiveis = acordesStats;
     });
 
-    if (mostrarTutorial) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _mostrarDialogoTutorial();
-      });
-    }
+    // if (mostrarTutorial) {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     _mostrarDialogoTutorial();
+    //   });
+    // }
   }
 
-  Future<void> _mostrarDialogoTutorial() async {
-    final String tutorialTxt = await rootBundle
-        .loadString('assets/data/tutoriais/acordes/ac_tutorial_desafio.txt');
+  Future<void> _atualizarEstatisticasNoJSON() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/TDM_estatisticas.json');
 
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text('Tutorial'),
-        content: Text(
-          tutorialTxt,
-          textAlign: TextAlign.justify,
-          style: TextStyle(fontSize: 16),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => {
-              setState(() => _tutorialFinalizado = true),
-              Navigator.of(context).pop()
-            },
-            child: Text('Entendido'),
-          ),
-        ],
-      ),
-    );
+    if (!await file.exists()) return;
+
+    final String content = await file.readAsString();
+    final Map<String, dynamic> data = json.decode(content);
+
+    final Map<String, dynamic> acordesData = data['estatisticas']['acordes'];
+
+    _pontuacaoFinal = (acertos / numQuestoes) * 100;
+    int medalhaObtida = _entregarMedalha(_pontuacaoFinal);
+
+    final Map<String, dynamic> dadosExercicioAtual =
+        acordesData[exercicioAcordeTipoSelecionado];
+
+    // Atualizando dados no JSON editavel
+    // Atualiza melhor pontuação/tempo se for o caso
+    if (_pontuacaoFinal > dadosExercicioAtual['melhor_pontuacao']) {
+      dadosExercicioAtual['melhor_pontuacao'] = _pontuacaoFinal.toInt();
+    }
+
+    if (_contadorTempo < dadosExercicioAtual['melhor_tempo'] ||
+        dadosExercicioAtual['melhor_tempo'] == 0) {
+      dadosExercicioAtual['melhor_tempo'] = _contadorTempo;
+    }
+
+    // Atualiza medalha se for melhor
+    if (medalhaObtida > dadosExercicioAtual['medalha']) {
+      dadosExercicioAtual['medalha'] = medalhaObtida;
+    }
+
+    // Desbloqueia o proximo exercicio, se houver
+    List<String> chaves = acordesData.keys
+        .where((key) =>
+            key != 'mostrar_tutorial' &&
+            key != 'notas_possiveis' &&
+            key != 'acidentes_possiveis')
+        .toList();
+
+    int atualIndex = chaves.indexOf(exercicioAcordeTipoSelecionado);
+    if (atualIndex != -1 &&
+        atualIndex < chaves.length - 1 &&
+        medalhaObtida >= 2) {
+      final proximoIntervalo = chaves[atualIndex + 1];
+      if (acordesData[proximoIntervalo] != null) {
+        acordesData[proximoIntervalo]['bloqueado'] = false;
+      }
+    }
+
+    // Escreve de volta o JSON atualizado
+    await file.writeAsString(JsonEncoder.withIndent('  ').convert(data));
   }
 
   Color _retornaMedalhaCor(int medalha) {
@@ -152,11 +219,45 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
     }
   }
 
+  int _entregarMedalha(double _pontuacaoFinal) {
+    if (_pontuacaoFinal >= 50 && _pontuacaoFinal < 70) return 1;
+
+    if (_pontuacaoFinal >= 70 && _pontuacaoFinal < 90) return 2;
+
+    if (_pontuacaoFinal >= 90) return 3;
+
+    return 0;
+  }
+
+  double calcularProgressoGeral() {
+    if (exerciciosDisponiveis.isEmpty) return 0.0;
+
+    double soma = 0;
+    for (var exercicio in exerciciosDisponiveis) {
+      int medalha = exercicio['medalha'] ?? 0;
+      switch (medalha) {
+        case 3:
+          soma += 100;
+          break;
+        case 2:
+          soma += 75;
+          break;
+        case 1:
+          soma += 50;
+          break;
+        default:
+          soma += 0;
+      }
+    }
+
+    return soma / exerciciosDisponiveis.length / 100; // valor entre 0.0 e 1.0
+  }
+
   void _selecionaExercicio(String tipo) {
     setState(() {
-      tipoSelecionado = tipo;
+      exercicioAcordeTipoSelecionado = tipo;
       mostrarTelaExercicio = true;
-      iniciarNovoExercicio();
+      iniciarExercicio();
     });
   }
 
@@ -185,6 +286,7 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
 
     List<String> tonalidades = notasNaturais.keys.toList();
     List<Map<String, dynamic>> acordes = [];
+    Set<String> mapaDeAcordesSorteadosAEvitar = {};
     Random random = Random();
 
     for (int i = 0; i < 10; i++) {
@@ -196,6 +298,14 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
       String tonica = tonalidades[random.nextInt(tonalidades.length)];
       String tipo = tiposPermitidos[random.nextInt(tiposPermitidos.length)];
 
+      // Evitando sortear acordes duplicados
+      String chave = '$tonica$tipo';
+      if (mapaDeAcordesSorteadosAEvitar.contains("$tonica$tipo")) {
+        i--;
+        continue;
+      }
+      mapaDeAcordesSorteadosAEvitar.add(chave);
+
       Acorde acorde = Acorde(tonica, tipo);
       acordes.add({
         'nome': acorde.toString(),
@@ -206,10 +316,16 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
     return acordes;
   }
 
-  void iniciarNovoExercicio() {
+  void iniciarExercicio() {
     selecaoUsuario.clear();
-    List<Map<String, dynamic>> acordes = gerarAcordesFiltrados(tipoSelecionado);
-    acordeAtual = acordes.first;
+    acordesGerados = gerarAcordesFiltrados(exercicioAcordeTipoSelecionado);
+    acordeAtual = acordesGerados!.removeAt(0);
+    iniciarTimer();
+  }
+
+  void iniciarProximoExercicio() {
+    selecaoUsuario.clear();
+    acordeAtual = acordesGerados!.removeAt(0);
     iniciarTimer();
   }
 
@@ -218,11 +334,12 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (tempoMaximo > 0) {
         setState(() {
+          _contadorTempo++;
           tempoMaximo--;
         });
       } else {
         timer.cancel();
-        mostrarResultado();
+        _finalizarExercicio();
       }
     });
   }
@@ -248,21 +365,36 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
       }
 
       if (tentativas < numQuestoes)
-        iniciarNovoExercicio();
+        iniciarProximoExercicio();
       else {
         tempoMaximo = 0;
       }
     });
   }
 
-  void mostrarResultado() {
+  Future<void> _finalizarExercicio() async {
+    await _atualizarEstatisticasNoJSON();
+    await _carregarEstatisticas();
+
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (_) => AlertDialog(
         title: Text('Resultado'),
         content: SingleChildScrollView(
             child: Text(
-                'Pontuação: $acertos/$tentativas\nErros: $acordesErrados')),
+                'Pontuação: $acertos/$tentativas (${_pontuacaoFinal.toInt()}%)\nErros: $acordesErrados')),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  _exercicioFinalizado = true;
+                  selecaoUsuario.clear();
+                });
+              },
+              child: const Text('Ok'))
+        ],
       ),
     );
   }
@@ -315,14 +447,34 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
                   ),
                 );
               }).toList(),
-            )
+            ),
+            SizedBox(height: 20),
+            Container(
+                child: Column(
+              children: [
+                Container(
+                    height: 8,
+                    width: 150,
+                    child: LinearProgressIndicator(
+                      value: calcularProgressoGeral(),
+                      minHeight: 8,
+                      backgroundColor: Colors.grey[300],
+                      color: Colors.blue,
+                    )),
+                SizedBox(height: 5),
+                Text(
+                  'Progresso: ${(calcularProgressoGeral() * 100).toStringAsFixed(0)}%',
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ],
+            )),
           ],
         ),
       );
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text('Desafio: $tipoSelecionado')),
+      appBar: AppBar(title: Text('Desafio: $exercicioAcordeTipoSelecionado')),
       body: LayoutBuilder(
         builder: (context, constraints) {
           double largura = constraints.maxWidth;
@@ -335,7 +487,13 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 10),
-                Text('Tempo restante: $tempoMaximo segundos'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Tempo: ${tempoMaximo}s '),
+                    Text('| Respostas: $tentativas/$numQuestoes'),
+                  ],
+                ),
                 SizedBox(height: 10),
                 Container(
                   width: largura * 0.8,
@@ -348,15 +506,17 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
                     physics: NeverScrollableScrollPhysics(),
                     children: notasPossiveis.map((nota) {
                       return ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            if (selecaoUsuario.contains(nota)) {
-                              selecaoUsuario.remove(nota);
-                            } else if (selecaoUsuario.length < 4) {
-                              selecaoUsuario.add(nota);
-                            }
-                          });
-                        },
+                        onPressed: _exercicioFinalizado
+                            ? null
+                            : () {
+                                setState(() {
+                                  if (selecaoUsuario.contains(nota)) {
+                                    selecaoUsuario.remove(nota);
+                                  } else if (selecaoUsuario.length < 4) {
+                                    selecaoUsuario.add(nota);
+                                  }
+                                });
+                              },
                         style: ElevatedButton.styleFrom(
                           shape: CircleBorder(),
                           padding: EdgeInsets.all(20),
@@ -398,8 +558,9 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
                 ],
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: verificarResposta,
-                  child: Text('Verificar Resposta'),
+                  onPressed: _exercicioFinalizado ? null : verificarResposta,
+                  child: Text(
+                      tentativas == numQuestoes ? 'Finalizar' : 'Submeter'),
                 )
               ],
             ),

@@ -77,6 +77,7 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
 
     showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Tutorial'),
@@ -165,20 +166,53 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
     tentativas++;
     if (respostaCorreta) {
       acertos++;
+      alertaSubmeterResposta('Correto!');
       iniciarNovoExercicio();
     } else {
-      acordesErrados += acordeAtual['nome'] + ' | ';
+      if (acordesErrados.isEmpty) {
+        acordesErrados = acordeAtual['nome'];
+      } else {
+        if (!acordesErrados.contains(acordeAtual['nome'])) {
+          acordesErrados += ', ' + acordeAtual['nome'];
+        }
+      }
+      alertaSubmeterResposta('Errou!');
     }
+  }
+
+  void alertaSubmeterResposta(String mensagem) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          Future.delayed(Duration(milliseconds: 500), () {
+            Navigator.of(context).pop(true);
+          });
+          return AlertDialog(
+            insetPadding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width / 4),
+            content: SizedBox(
+                child:
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Text(mensagem + ' '),
+              if (mensagem.contains('Errou'))
+                Icon(Icons.close)
+              else
+                Icon(Icons.check_circle)
+            ])),
+          );
+        });
   }
 
   void mostrarResultado() {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text('Fim do tempo!'),
         content: SingleChildScrollView(
           child: Text(
-              'Pontuação: $acertos/$tentativas tentativas.\nErros: $acordesErrados'),
+              'Pontuação: $acertos/$tentativas tentativas.\nEstude os acordes: $acordesErrados'),
         ),
         actions: [
           TextButton(
@@ -221,11 +255,17 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Identifique as notas do acorde: ${acordeAtual['nome']}',
+                  'Notas do acorde: ${acordeAtual['nome']}',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 10),
-                Text('Tempo restante: $tempoRestante segundos'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Tempo: ${tempoRestante}s '),
+                    Text('| Respostas: $tentativas'),
+                  ],
+                ),
                 SizedBox(height: 10),
                 Container(
                   // height: alturaDisponivel * 0.7,
@@ -298,7 +338,7 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: verificarResposta,
-                  child: Text('Verificar Resposta'),
+                  child: Text('Verificar resposta'),
                 ),
               ],
             ),

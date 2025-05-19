@@ -1,5 +1,5 @@
-// Arquivo: escala_desafio_page.dart
-
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
@@ -75,8 +75,10 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
   }
 
   Future<void> _carregarEstatisticas() async {
-    final String resposta =
-        await rootBundle.loadString('assets/data/estatisticas.json');
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/TDM_estatisticas.json');
+
+    final String resposta = await file.readAsString();
     final Map<String, dynamic> data = json.decode(resposta);
 
     final bool mostrarTutorial =
@@ -104,12 +106,6 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
     setState(() {
       exerciciosDisponiveis = escalasStats;
     });
-
-    if (mostrarTutorial) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _mostrarDialogoTutorial();
-      });
-    }
   }
 
   Future<void> _mostrarDialogoTutorial() async {
@@ -118,6 +114,7 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
 
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (_) => AlertDialog(
         title: Text('Tutorial'),
         content: Text(
@@ -244,6 +241,7 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
   void mostrarResultado() {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (_) => AlertDialog(
         title: Text('Resultado'),
         content: SingleChildScrollView(
@@ -346,7 +344,7 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: verificarResposta,
-              child: Text('Verificar Resposta'),
+              child: Text('Submeter'),
             )
           ],
         ),

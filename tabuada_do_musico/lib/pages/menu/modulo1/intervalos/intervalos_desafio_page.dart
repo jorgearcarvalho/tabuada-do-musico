@@ -1,3 +1,5 @@
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:tcc_app/database/tonalidades/bemois.dart';
@@ -24,13 +26,15 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
   String acidenteEscolhido = ''; // Novo estado para o acidente escolhido
   final List<String> notasPossiveis = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
   final List<String> acidentesPossiveis = ['bb', 'b', '#', 'x'];
-  late List<Map<String, dynamic>> intervalosDisponiveis = [];
+  late List<Map<String, dynamic>> exerciciosDisponiveis = [];
 
   Timer? _timer;
   int _contadorTempo = 0;
-  final int _maxTempo = 36;
+  final int _maxTempo = 60;
   int _contadorRespostas = 0;
-  final int _maxRespostas = 18;
+  final int _numQuestoes = 18;
+
+  double _pontuacaoFinal = 0;
 
   bool _mostrarSessaoIntervalos = true;
 
@@ -40,7 +44,8 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
   @override
   void initState() {
     super.initState();
-    _carregarIntervalos();
+    _carregarEstatisticas();
+    _mostrarDialogoTutorial();
   }
 
   Future<void> _mostrarDialogoTutorial() async {
@@ -49,6 +54,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
 
     showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Tutorial'),
@@ -69,9 +75,11 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
         });
   }
 
-  Future<void> _carregarIntervalos() async {
-    final String response =
-        await rootBundle.loadString('assets/data/estatisticas.json');
+  Future<void> _carregarEstatisticas() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/TDM_estatisticas.json');
+
+    final String response = await file.readAsString();
     final Map<String, dynamic> data = json.decode(response);
 
     final bool mostrarTutorial =
@@ -97,24 +105,127 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
     });
 
     setState(() {
-      intervalosDisponiveis = intervalos;
+      exerciciosDisponiveis = intervalos;
     });
 
-    if (mostrarTutorial) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _mostrarDialogoTutorial();
-      });
+    // if (mostrarTutorial) {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     _mostrarDialogoTutorial();
+    //   });
+    // }
+  }
+
+  Future<void> _atualizarEstatisticasNoJSON() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/TDM_estatisticas.json');
+
+    if (!await file.exists()) return;
+
+    final String content = await file.readAsString();
+    final Map<String, dynamic> data = json.decode(content);
+
+    final Map<String, dynamic> intervalosData =
+        data['estatisticas']['intervalos'];
+
+    // Calcula a pontuação do usuário
+    int acertos = _respostas.where((res) => res['isCorrect']).length;
+    _pontuacaoFinal = (acertos / _numQuestoes) * 100;
+    int medalhaObtida = _entregarMedalha();
+
+    final Map<String, dynamic> intervaloAtualData =
+        intervalosData[intervaloSelecionado];
+
+    // Atualiza melhor pontuação/tempo se for o caso
+    if (_pontuacaoFinal > intervaloAtualData['melhor_pontuacao']) {
+      intervaloAtualData['melhor_pontuacao'] = _pontuacaoFinal.toInt();
     }
+
+    if (_contadorTempo < intervaloAtualData['melhor_tempo'] ||
+        intervaloAtualData['melhor_tempo'] == 0) {
+      intervaloAtualData['melhor_tempo'] = _contadorTempo;
+    }
+
+    // Atualiza medalha se for melhor
+    if (medalhaObtida > intervaloAtualData['medalha']) {
+      intervaloAtualData['medalha'] = medalhaObtida;
+    }
+
+    // Desbloqueia o próximo intervalo se houver
+    List<String> chaves = intervalosData.keys
+        .where((key) =>
+            key != 'mostrar_tutorial' &&
+            key != 'notas_possiveis' &&
+            key != 'acidentes_possiveis')
+        .toList();
+
+    int atualIndex = chaves.indexOf(intervaloSelecionado);
+    if (atualIndex != -1 &&
+        atualIndex < chaves.length - 1 &&
+        medalhaObtida >= 2) {
+      final proximoIntervalo = chaves[atualIndex + 1];
+      if (intervalosData[proximoIntervalo] != null) {
+        intervalosData[proximoIntervalo]['bloqueado'] = false;
+      }
+    }
+
+    // Escreve de volta o JSON atualizado
+    await file.writeAsString(JsonEncoder.withIndent('  ').convert(data));
+  }
+
+  double calcularProgressoGeral() {
+    if (exerciciosDisponiveis.isEmpty) return 0.0;
+
+    double soma = 0;
+    for (var exercicio in exerciciosDisponiveis) {
+      int medalha = exercicio['medalha'] ?? 0;
+      switch (medalha) {
+        case 3:
+          soma += 100;
+          break;
+        case 2:
+          soma += 75;
+          break;
+        case 1:
+          soma += 50;
+          break;
+        default:
+          soma += 0;
+      }
+    }
+
+    return soma / exerciciosDisponiveis.length / 100; // valor entre 0.0 e 1.0
+  }
+
+  Color _retornaMedalhaCor(int medalha) {
+    switch (medalha) {
+      case 3:
+        return Colors.amber;
+      case 2:
+        return Colors.grey;
+      case 1:
+        return Colors.brown;
+      default:
+        return Colors.grey.withOpacity(0.3);
+    }
+  }
+
+  int _entregarMedalha() {
+    if (_pontuacaoFinal >= 50 && _pontuacaoFinal < 70) return 1;
+
+    if (_pontuacaoFinal >= 70 && _pontuacaoFinal < 90) return 2;
+
+    if (_pontuacaoFinal >= 90) return 3;
+
+    return 0;
   }
 
   void _startContador() {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         _contadorTempo++;
-        if (_contadorTempo >= _maxTempo ||
-            _contadorRespostas >= _maxRespostas) {
+        if (_contadorTempo >= _maxTempo || _contadorRespostas >= _numQuestoes) {
           _stopContador();
-          _onComplete();
+          _finalizarExercicio();
         }
       });
     });
@@ -124,47 +235,6 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
     if (_timer?.isActive ?? false) {
       _timer?.cancel();
     }
-  }
-
-  void _onComplete() {
-    int correctAnswers =
-        _respostas.where((answer) => answer['isCorrect']).length;
-    int incorrectAnswers = _respostas.length - correctAnswers;
-
-    String wrongAnswersDetails = _respostas
-        .where((answer) => !answer['isCorrect'])
-        .map((answer) =>
-            "${answer['interval']} de ${answer['nota']} - Correto: ${answer['correta']} / Sua resposta: ${answer['usuario']}")
-        .join('\n');
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Fim do exercício'),
-          content: SingleChildScrollView(
-            child: Text(
-                'Você completou o exercício!\n\nAcertos: $correctAnswers\nErros: $incorrectAnswers\n\nErros Detalhados:\n$wrongAnswersDetails'),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                setState(() {
-                  _contadorTempo = 0;
-                  _contadorRespostas = 0;
-                  intervaloSelecionado = '';
-                  _respostas.clear();
-                  notasSorteadas.clear();
-                  _mostrarSessaoIntervalos = true;
-                });
-              },
-              child: const Text('Ok'),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   void _gerarQuestao() {
@@ -204,7 +274,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
     });
   }
 
-  void _submitResposta() {
+  void _submeterResposta() {
     final respostaDoUsuario = notaEscolhida + acidenteEscolhido;
     final isCorreto = respostaDoUsuario == respostaCorreta;
 
@@ -218,9 +288,9 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
 
     setState(() {
       _contadorRespostas++;
-      if (_contadorRespostas >= _maxRespostas) {
+      if (_contadorRespostas >= _numQuestoes) {
         _stopContador();
-        _onComplete();
+        _finalizarExercicio();
       } else {
         notaEscolhida = ''; // Limpa a nota escolhida
         acidenteEscolhido = ''; // Limpa o acidente escolhido
@@ -238,17 +308,49 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
     });
   }
 
-  Color _retornaMedalhaCor(int medalha) {
-    switch (medalha) {
-      case 3:
-        return Colors.amber;
-      case 2:
-        return Colors.grey;
-      case 1:
-        return Colors.brown;
-      default:
-        return Colors.grey.withOpacity(0.3);
-    }
+  Future<void> _finalizarExercicio() async {
+    int correctAnswers =
+        _respostas.where((answer) => answer['isCorrect']).length;
+    int incorrectAnswers = _respostas.length - correctAnswers;
+
+    String wrongAnswersDetails = _respostas
+        .where((answer) => !answer['isCorrect'])
+        .map((answer) =>
+            "${answer['interval']} de ${answer['nota']} - Correto: ${answer['correta']} / Sua resposta: ${answer['usuario']}")
+        .join('\n');
+
+    await _atualizarEstatisticasNoJSON();
+    await _carregarEstatisticas();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Fim do exercício'),
+          content: SingleChildScrollView(
+            child: Text(
+                'Você completou o exercício!\nPorcentagem de acertos: ${_pontuacaoFinal.toInt()}%\n\nAcertos: $correctAnswers\nErros: $incorrectAnswers\n\nErros Detalhados:\n$wrongAnswersDetails'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  _contadorTempo = 0;
+                  _contadorRespostas = 0;
+                  intervaloSelecionado = '';
+                  _respostas.clear();
+                  notasSorteadas.clear();
+                  _mostrarSessaoIntervalos = true;
+                });
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -284,30 +386,42 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
                 const SizedBox(height: 20),
                 Column(
                   children: [
-                    ...intervalosDisponiveis.map((intervaloMap) {
-                      final nome = intervaloMap['nome'];
-                      final bloqueado = intervaloMap['bloqueado'] as bool;
-                      final medalha = intervaloMap['medalha'];
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: exerciciosDisponiveis.map((intervaloMap) {
+                        final nome = intervaloMap['nome'];
+                        final bloqueado = intervaloMap['bloqueado'] as bool;
+                        final medalha = intervaloMap['medalha'];
 
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (!bloqueado)
-                              Icon(Icons.emoji_events,
-                                  color: _retornaMedalhaCor(medalha), size: 24),
-                            const SizedBox(width: 5),
-                            ElevatedButton(
-                              onPressed: bloqueado
-                                  ? null
-                                  : () => _selecionaIntervalo(nome),
-                              child: Text(nome),
-                            )
-                          ],
-                        ),
-                      );
-                    }).toList(),
+                        return SizedBox(
+                          width: MediaQuery.of(context).size.width / 2 - 50,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (medalha > 0)
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 6),
+                                  child: Icon(
+                                    Icons.emoji_events,
+                                    color: _retornaMedalhaCor(medalha),
+                                    size: 20,
+                                  ),
+                                ),
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: bloqueado
+                                      ? null
+                                      : () => _selecionaIntervalo(nome),
+                                  child:
+                                      Text(nome, textAlign: TextAlign.center),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
                     SizedBox(
                       height: 20,
                     ),
@@ -318,30 +432,34 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
                             height: 8,
                             width: 150,
                             child: LinearProgressIndicator(
-                              value: _contadorRespostas / _maxRespostas,
+                              value: calcularProgressoGeral(),
                               minHeight: 8,
                               backgroundColor: Colors.grey[300],
                               color: Colors.blue,
                             )),
                         SizedBox(height: 5),
                         Text(
-                          'Progresso',
-                          style: const TextStyle(fontSize: 16),
+                          'Progresso: ${(calcularProgressoGeral() * 100).toStringAsFixed(0)}%',
+                          style: const TextStyle(fontSize: 14),
                         ),
                       ],
                     )),
                   ],
                 ),
               ] else ...[
-                const SizedBox(height: 20),
-                Text('Tempo: $_contadorTempo / $_maxTempo s'),
-                const SizedBox(height: 10),
-                Text('Respostas: $_contadorRespostas / $_maxRespostas'),
-                const SizedBox(height: 20),
                 Text(
                   '$intervaloAtual de $notaAtual',
-                  style: const TextStyle(fontSize: 24),
+                  style: const TextStyle(
+                      fontSize: 24, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Tempo: ${_contadorTempo} / ${_maxTempo}s '),
+                    Text('| Respostas: $_contadorRespostas / $_numQuestoes'),
+                  ],
                 ),
                 const SizedBox(height: 20),
                 SizedBox(
@@ -349,7 +467,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
                   child: TextField(
                     readOnly: true,
                     decoration: const InputDecoration(
-                      hintText: 'Nota',
+                      hintText: '',
                       border: OutlineInputBorder(),
                     ),
                     controller: TextEditingController(
@@ -383,7 +501,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: (notaEscolhida.isEmpty) ? null : _submitResposta,
+                  onPressed: (notaEscolhida.isEmpty) ? null : _submeterResposta,
                   child: const Text('Submit'),
                 ),
                 const SizedBox(height: 100),

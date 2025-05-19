@@ -185,7 +185,7 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          Future.delayed(Duration(seconds: 1), () {
+          Future.delayed(Duration(milliseconds: 500), () {
             Navigator.of(context).pop(true);
           });
           return AlertDialog(

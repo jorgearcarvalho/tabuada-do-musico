@@ -106,12 +106,6 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
     setState(() {
       exerciciosDisponiveis = escalasStats;
     });
-
-    if (mostrarTutorial) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _mostrarDialogoTutorial();
-      });
-    }
   }
 
   Future<void> _mostrarDialogoTutorial() async {

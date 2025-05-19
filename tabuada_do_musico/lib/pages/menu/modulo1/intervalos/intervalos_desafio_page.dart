@@ -26,13 +26,15 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
   String acidenteEscolhido = ''; // Novo estado para o acidente escolhido
   final List<String> notasPossiveis = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
   final List<String> acidentesPossiveis = ['bb', 'b', '#', 'x'];
-  late List<Map<String, dynamic>> intervalosDisponiveis = [];
+  late List<Map<String, dynamic>> exerciciosDisponiveis = [];
 
   Timer? _timer;
   int _contadorTempo = 0;
   final int _maxTempo = 60;
   int _contadorRespostas = 0;
-  final int _maxRespostas = 18;
+  final int _numQuestoes = 18;
+
+  double _pontuacaoFinal = 0;
 
   bool _mostrarSessaoIntervalos = true;
 
@@ -42,8 +44,8 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
   @override
   void initState() {
     super.initState();
+    _carregarEstatisticas();
     _mostrarDialogoTutorial();
-    _carregarIntervalos();
   }
 
   Future<void> _mostrarDialogoTutorial() async {
@@ -73,7 +75,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
         });
   }
 
-  Future<void> _carregarIntervalos() async {
+  Future<void> _carregarEstatisticas() async {
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/TDM_estatisticas.json');
 
@@ -103,7 +105,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
     });
 
     setState(() {
-      intervalosDisponiveis = intervalos;
+      exerciciosDisponiveis = intervalos;
     });
 
     // if (mostrarTutorial) {
@@ -127,48 +129,42 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
 
     // Calcula a pontuação do usuário
     int acertos = _respostas.where((res) => res['isCorrect']).length;
-    double pontuacaoFinal = (acertos / _maxRespostas) * 100;
-    int medalhaObtida = _entregarMedalha(pontuacaoFinal);
+    _pontuacaoFinal = (acertos / _numQuestoes) * 100;
+    int medalhaObtida = _entregarMedalha();
 
     final Map<String, dynamic> intervaloAtualData =
         intervalosData[intervaloSelecionado];
 
-    // Atualiza dados se existir
-    if (intervaloAtualData != null) {
-      intervaloAtualData['tempo_atual'] = _contadorTempo;
-      intervaloAtualData['pontuacao_atual'] = pontuacaoFinal.toInt();
+    // Atualiza melhor pontuação/tempo se for o caso
+    if (_pontuacaoFinal > intervaloAtualData['melhor_pontuacao']) {
+      intervaloAtualData['melhor_pontuacao'] = _pontuacaoFinal.toInt();
+    }
 
-      // Atualiza melhor pontuação/tempo se for o caso
-      if (pontuacaoFinal > intervaloAtualData['melhor_pontuacao']) {
-        intervaloAtualData['melhor_pontuacao'] = pontuacaoFinal.toInt();
-      }
+    if (_contadorTempo < intervaloAtualData['melhor_tempo'] ||
+        intervaloAtualData['melhor_tempo'] == 0) {
+      intervaloAtualData['melhor_tempo'] = _contadorTempo;
+    }
 
-      if (_contadorTempo < intervaloAtualData['melhor_tempo'] ||
-          intervaloAtualData['melhor_tempo'] == 0) {
-        intervaloAtualData['melhor_tempo'] = _contadorTempo;
-      }
+    // Atualiza medalha se for melhor
+    if (medalhaObtida > intervaloAtualData['medalha']) {
+      intervaloAtualData['medalha'] = medalhaObtida;
+    }
 
-      // Atualiza medalha se for melhor
-      if (medalhaObtida > intervaloAtualData['medalha']) {
-        intervaloAtualData['medalha'] = medalhaObtida;
-      }
+    // Desbloqueia o próximo intervalo se houver
+    List<String> chaves = intervalosData.keys
+        .where((key) =>
+            key != 'mostrar_tutorial' &&
+            key != 'notas_possiveis' &&
+            key != 'acidentes_possiveis')
+        .toList();
 
-      // Desbloqueia o próximo intervalo se houver
-      List<String> chaves = intervalosData.keys
-          .where((key) =>
-              key != 'mostrar_tutorial' &&
-              key != 'notas_possiveis' &&
-              key != 'acidentes_possiveis')
-          .toList();
-
-      int atualIndex = chaves.indexOf(intervaloSelecionado);
-      if (atualIndex != -1 &&
-          atualIndex < chaves.length - 1 &&
-          medalhaObtida >= 2) {
-        final proximoIntervalo = chaves[atualIndex + 1];
-        if (intervalosData[proximoIntervalo] != null) {
-          intervalosData[proximoIntervalo]['bloqueado'] = false;
-        }
+    int atualIndex = chaves.indexOf(intervaloSelecionado);
+    if (atualIndex != -1 &&
+        atualIndex < chaves.length - 1 &&
+        medalhaObtida >= 2) {
+      final proximoIntervalo = chaves[atualIndex + 1];
+      if (intervalosData[proximoIntervalo] != null) {
+        intervalosData[proximoIntervalo]['bloqueado'] = false;
       }
     }
 
@@ -177,11 +173,11 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
   }
 
   double calcularProgressoGeral() {
-    if (intervalosDisponiveis.isEmpty) return 0.0;
+    if (exerciciosDisponiveis.isEmpty) return 0.0;
 
     double soma = 0;
-    for (var intervalo in intervalosDisponiveis) {
-      int medalha = intervalo['medalha'] ?? 0;
+    for (var exercicio in exerciciosDisponiveis) {
+      int medalha = exercicio['medalha'] ?? 0;
       switch (medalha) {
         case 3:
           soma += 100;
@@ -197,7 +193,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
       }
     }
 
-    return soma / intervalosDisponiveis.length / 100; // valor entre 0.0 e 1.0
+    return soma / exerciciosDisponiveis.length / 100; // valor entre 0.0 e 1.0
   }
 
   Color _retornaMedalhaCor(int medalha) {
@@ -213,12 +209,12 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
     }
   }
 
-  int _entregarMedalha(double pontuacaoFinal) {
-    if (pontuacaoFinal >= 50 && pontuacaoFinal < 70) return 1;
+  int _entregarMedalha() {
+    if (_pontuacaoFinal >= 50 && _pontuacaoFinal < 70) return 1;
 
-    if (pontuacaoFinal >= 70 && pontuacaoFinal < 90) return 2;
+    if (_pontuacaoFinal >= 70 && _pontuacaoFinal < 90) return 2;
 
-    if (pontuacaoFinal >= 90) return 3;
+    if (_pontuacaoFinal >= 90) return 3;
 
     return 0;
   }
@@ -227,8 +223,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         _contadorTempo++;
-        if (_contadorTempo >= _maxTempo ||
-            _contadorRespostas >= _maxRespostas) {
+        if (_contadorTempo >= _maxTempo || _contadorRespostas >= _numQuestoes) {
           _stopContador();
           _finalizarExercicio();
         }
@@ -293,7 +288,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
 
     setState(() {
       _contadorRespostas++;
-      if (_contadorRespostas >= _maxRespostas) {
+      if (_contadorRespostas >= _numQuestoes) {
         _stopContador();
         _finalizarExercicio();
       } else {
@@ -325,7 +320,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
         .join('\n');
 
     await _atualizarEstatisticasNoJSON();
-    await _carregarIntervalos();
+    await _carregarEstatisticas();
 
     showDialog(
       context: context,
@@ -335,7 +330,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
           title: const Text('Fim do exercício'),
           content: SingleChildScrollView(
             child: Text(
-                'Você completou o exercício!\n\nAcertos: $correctAnswers\nErros: $incorrectAnswers\n\nErros Detalhados:\n$wrongAnswersDetails'),
+                'Você completou o exercício!\nPorcentagem de acertos: ${_pontuacaoFinal.toInt()}%\n\nAcertos: $correctAnswers\nErros: $incorrectAnswers\n\nErros Detalhados:\n$wrongAnswersDetails'),
           ),
           actions: [
             TextButton(
@@ -394,7 +389,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
                     Wrap(
                       spacing: 10,
                       runSpacing: 10,
-                      children: intervalosDisponiveis.map((intervaloMap) {
+                      children: exerciciosDisponiveis.map((intervaloMap) {
                         final nome = intervaloMap['nome'];
                         final bloqueado = intervaloMap['bloqueado'] as bool;
                         final medalha = intervaloMap['medalha'];
@@ -463,7 +458,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text('Tempo: ${_contadorTempo} / ${_maxTempo}s '),
-                    Text('| Respostas: $_contadorRespostas / $_maxRespostas'),
+                    Text('| Respostas: $_contadorRespostas / $_numQuestoes'),
                   ],
                 ),
                 const SizedBox(height: 20),

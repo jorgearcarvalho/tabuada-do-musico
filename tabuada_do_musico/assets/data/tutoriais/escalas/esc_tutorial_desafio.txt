@@ -1,1 +1,8 @@
-Tutorial
+Escolha um tipo de escala. Uma vez escolhida, você receberá 60 segundos para indicar as notas que compõem 03 determinadas tonalidades, aos moldes desta escala.
+
+Para desbloquear o próximo exercício, você deverá atingir, ao menos, uma medalha de prata no anterior.
+
+Medalhas:
+50% = Bronze
+70% = Prata
+90% = Ouro

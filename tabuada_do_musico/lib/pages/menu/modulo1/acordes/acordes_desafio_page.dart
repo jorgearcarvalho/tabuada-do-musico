@@ -118,8 +118,8 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
     final String resposta = await file.readAsString();
     final Map<String, dynamic> data = json.decode(resposta);
 
-    final bool mostrarTutorial =
-        data['estatisticas']['acordes']['mostrar_tutorial'];
+    // final bool mostrarTutorial =
+    //     data['estatisticas']['acordes']['mostrar_tutorial'];
 
     final Map<String, dynamic> acordesStatsCru =
         data['estatisticas']['acordes'];
@@ -143,12 +143,6 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
     setState(() {
       exerciciosDisponiveis = acordesStats;
     });
-
-    // if (mostrarTutorial) {
-    //   WidgetsBinding.instance.addPostFrameCallback((_) {
-    //     _mostrarDialogoTutorial();
-    //   });
-    // }
   }
 
   Future<void> _atualizarEstatisticasNoJSON() async {

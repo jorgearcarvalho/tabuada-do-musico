@@ -1,1 +1,3 @@
-Tutorial
+Você receberá 30 segundos para indicar as nota que compõem uma determinada escala, sorteada a partir de uma nota qualquer.
+
+Por se tratar de um exercício livre, não haverá distribuição de medalhas, apenas um feedback com acertos e erros.

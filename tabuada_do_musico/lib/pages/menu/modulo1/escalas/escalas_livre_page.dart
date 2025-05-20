@@ -153,6 +153,30 @@ class _EscalasLivrePageState extends State<EscalasLivrePage> {
     });
   }
 
+  void alertaSubmeterResposta(String mensagem) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          Future.delayed(Duration(milliseconds: 500), () {
+            Navigator.of(context).pop(true);
+          });
+          return AlertDialog(
+            insetPadding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width / 4),
+            content: SizedBox(
+                child:
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Text(mensagem + ' '),
+              if (mensagem.contains('Errou'))
+                const Icon(Icons.close, color: Colors.red)
+              else
+                const Icon(Icons.check_circle, color: Colors.green)
+            ])),
+          );
+        });
+  }
+
   void verificarResposta() {
     List<dynamic> notasCorretas = escalaAtual['notas'];
     bool respostaCorreta = const SetEquality()
@@ -161,8 +185,10 @@ class _EscalasLivrePageState extends State<EscalasLivrePage> {
     tentativas++;
     if (respostaCorreta) {
       acertos++;
+      alertaSubmeterResposta('Correto!');
       iniciarNovoExercicio();
     } else {
+      alertaSubmeterResposta('Errou!');
       escalasErradas += escalaAtual['nome'] + ' | ';
     }
   }

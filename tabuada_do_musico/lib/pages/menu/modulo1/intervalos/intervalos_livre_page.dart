@@ -106,11 +106,20 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
         _respostas.where((answer) => answer['isCorrect']).length;
     int incorrectAnswers = _respostas.length - correctAnswers;
 
-    String wrongAnswersDetails = _respostas
-        .where((answer) => !answer['isCorrect'])
-        .map((answer) =>
-            "${answer['interval']} de ${answer['nota']}. Correto: ${answer['correta']} | Resposta: ${answer['usuario']}")
-        .join('\n');
+    final Set<String> errosUnicos = {};
+    final List<String> detalhesErros = [];
+
+    for (var answer in _respostas.where((a) => !a['isCorrect'])) {
+      String chaveErro = "${answer['nota']}_${answer['interval']}";
+
+      if (!errosUnicos.contains(chaveErro)) {
+        errosUnicos.add(chaveErro);
+        detalhesErros.add(
+            "${answer['interval']} de ${answer['nota']} -> ${answer['correta']}");
+      }
+    }
+
+    String wrongAnswersDetails = detalhesErros.join('\n');
 
     showDialog(
       context: context,
@@ -120,7 +129,7 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
           title: const Text('Fim do exercício'),
           content: SingleChildScrollView(
             child: Text(
-                'Você completou o exercício!\n\nAcertos: $correctAnswers\nErros: $incorrectAnswers\n\nErros Detalhados:\n$wrongAnswersDetails'),
+                'Você completou o exercício!\n\nAcertos: $correctAnswers\nErros: $incorrectAnswers\n\Corrigindo...\n$wrongAnswersDetails'),
           ),
           actions: [
             TextButton(
@@ -173,6 +182,34 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
     });
   }
 
+  void alertaSubmeterResposta(String mensagem) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        Future.delayed(const Duration(milliseconds: 500), () {
+          Navigator.of(context).pop(true);
+        });
+        return AlertDialog(
+          insetPadding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width / 4),
+          content: SizedBox(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(mensagem + ' '),
+                if (mensagem.contains('Errou'))
+                  const Icon(Icons.close, color: Colors.red)
+                else
+                  const Icon(Icons.check_circle, color: Colors.green)
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void _submitResposta() {
     final respostaDoUsuario = notaEscolhida + acidenteEscolhido;
     final isCorreto = respostaDoUsuario == respostaCorreta;
@@ -185,18 +222,23 @@ class _IntervalosLivrePageState extends State<IntervalosLivrePage> {
       'isCorrect': isCorreto
     });
 
+    // Mostra o alerta com base na resposta
+    alertaSubmeterResposta(isCorreto ? 'Acertou!' : 'Errou!');
+
     setState(() {
       _contadorRespostas++;
 
-      // Reseta o contador, zerando o tempo
-      _stopContador();
-      _contadorTempo = 0;
-      _startContador();
+      if (isCorreto) {
+        // Reseta o contador, zerando o tempo
+        _stopContador();
+        _contadorTempo = 0;
+        _startContador();
 
-      // Prepara para receber a proxima resposta
-      notaEscolhida = '';
-      acidenteEscolhido = '';
-      _gerarQuestao();
+        // Prepara para receber a próxima resposta
+        notaEscolhida = '';
+        acidenteEscolhido = '';
+        _gerarQuestao();
+      }
     });
   }
 

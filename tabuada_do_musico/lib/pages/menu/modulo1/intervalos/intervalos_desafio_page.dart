@@ -310,7 +310,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
     String wrongAnswersDetails = _respostas
         .where((answer) => !answer['isCorrect'])
         .map((answer) =>
-            "${answer['interval']} de ${answer['nota']} - Correto: ${answer['correta']} / Sua resposta: ${answer['usuario']}")
+            "${answer['interval']} de ${answer['nota']} -> ${answer['correta']}")
         .join('\n');
 
     await _atualizarEstatisticasNoJSON();
@@ -342,7 +342,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
       );
     } else {
       content = Text(
-        'Você completou o exercício!\nPorcentagem de acertos: ${_pontuacaoFinal.toInt()}%\n\nAcertos: $correctAnswers\nErros: $incorrectAnswers\n\nErros Detalhados:\n$wrongAnswersDetails',
+        'Você completou o exercício!\nPorcentagem de acertos: ${_pontuacaoFinal.toInt()}%\n\nAcertos: $correctAnswers\nErros: $incorrectAnswers\n\nCorrigindo... \n$wrongAnswersDetails',
         textAlign: TextAlign.left,
       );
     }

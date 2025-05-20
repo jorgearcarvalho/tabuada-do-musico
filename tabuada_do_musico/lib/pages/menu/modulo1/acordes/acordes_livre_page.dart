@@ -195,9 +195,9 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Text(mensagem + ' '),
               if (mensagem.contains('Errou'))
-                Icon(Icons.close)
+                const Icon(Icons.close, color: Colors.red)
               else
-                Icon(Icons.check_circle)
+                const Icon(Icons.check_circle, color: Colors.green)
             ])),
           );
         });

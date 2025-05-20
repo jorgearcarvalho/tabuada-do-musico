@@ -73,6 +73,7 @@ flutter:
     - assets/images/clave_de_sol.webp
     - assets/images/clave_de_sol.png
     - assets/images/clave_de_sol_1.png
+    - assets/images/construtor1.png
     - assets/data/estatisticas.json
     - assets/data/tutoriais/intervalos/int_tutorial_livre.txt
     - assets/data/tutoriais/intervalos/int_tutorial_desafio.txt

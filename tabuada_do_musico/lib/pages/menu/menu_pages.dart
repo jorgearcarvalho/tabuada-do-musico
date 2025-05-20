@@ -26,26 +26,28 @@ class _MenuPages extends State<MenuPages> {
   }
 
   Widget _buildMenuInicial(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        ElevatedButton(
-          onPressed: _ativaModulo1, // Switch to secondary menu
-          child: const Text('Módulo I - Formação básica',
-              style: TextStyle(fontSize: 20)),
-        ),
-        const SizedBox(height: 30),
-        ElevatedButton(
-          onPressed: _ativaModulo2, // Switch to secondary menu
-          child: const Text('Módulo II - Formação técnica',
-              style: TextStyle(fontSize: 20)),
-        ),
-        const SizedBox(height: 30),
-        ElevatedButton(
-          onPressed: () => Navigator.pushNamed(context, '/creditos'),
-          child: const Text('Creditos', style: TextStyle(fontSize: 20)),
-        )
-      ],
+    return SafeArea(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(
+            onPressed: _ativaModulo1, // Switch to secondary menu
+            child: const Text('Módulo I - Formação básica',
+                style: TextStyle(fontSize: 20)),
+          ),
+          const SizedBox(height: 30),
+          ElevatedButton(
+            onPressed: _ativaModulo2, // Switch to secondary menu
+            child: const Text('Módulo II - Formação técnica',
+                style: TextStyle(fontSize: 20)),
+          ),
+          const SizedBox(height: 30),
+          ElevatedButton(
+            onPressed: () => Navigator.pushNamed(context, '/creditos'),
+            child: const Text('Creditos', style: TextStyle(fontSize: 20)),
+          )
+        ],
+      ),
     );
   }
 
@@ -79,9 +81,19 @@ class _MenuPages extends State<MenuPages> {
       );
     }
     if (modulo == 2) {
-      return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [Text('Em desenvolvimento')]);
+      return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text('Em desenvolvimento...', style: TextStyle(fontSize: 18)),
+        Container(
+          height: 400,
+          width: 250,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(150),
+            child: Image.asset(
+              'assets/images/construtor1.png',
+            ),
+          ),
+        ),
+      ]);
     }
     ;
     return Text('Out of reach');
@@ -93,12 +105,14 @@ class _MenuPages extends State<MenuPages> {
       appBar: AppBar(
         title: const Text('Tabuada do Músico'),
       ),
-      body: Center(
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
-          child: _showMainMenu
-              ? _buildMenuInicial(context)
-              : _buildMenuPrincipalModulo1(context),
+      body: SafeArea(
+        child: Center(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: _showMainMenu
+                ? _buildMenuInicial(context)
+                : _buildMenuPrincipalModulo1(context),
+          ),
         ),
       ),
     );

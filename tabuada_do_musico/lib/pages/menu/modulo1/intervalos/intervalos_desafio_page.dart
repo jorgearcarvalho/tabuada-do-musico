@@ -82,8 +82,8 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
     final String response = await file.readAsString();
     final Map<String, dynamic> data = json.decode(response);
 
-    final bool mostrarTutorial =
-        data['estatisticas']['intervalos']['mostrar_tutorial'];
+    // final bool mostrarTutorial =
+    //     data['estatisticas']['intervalos']['mostrar_tutorial'];
 
     final Map<String, dynamic> intervalosRaw =
         data['estatisticas']['intervalos'];
@@ -107,12 +107,6 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
     setState(() {
       exerciciosDisponiveis = intervalos;
     });
-
-    // if (mostrarTutorial) {
-    //   WidgetsBinding.instance.addPostFrameCallback((_) {
-    //     _mostrarDialogoTutorial();
-    //   });
-    // }
   }
 
   Future<void> _atualizarEstatisticasNoJSON() async {

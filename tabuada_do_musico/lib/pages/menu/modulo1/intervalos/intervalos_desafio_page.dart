@@ -316,16 +316,44 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
     await _atualizarEstatisticasNoJSON();
     await _carregarEstatisticas();
 
+    Widget content;
+
+    if (_pontuacaoFinal >= 50) {
+      int medalha = _entregarMedalha();
+      Color corMedalha = _retornaMedalhaCor(medalha);
+
+      content = Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(Icons.emoji_events, size: 60, color: corMedalha),
+          const SizedBox(height: 16),
+          const Text(
+            'Parabéns! Você recebeu uma medalha!',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Porcentagem de acertos: ${_pontuacaoFinal.toInt()}%\nAcertos: $correctAnswers\nErros: $incorrectAnswers',
+            textAlign: TextAlign.center,
+          ),
+        ],
+      );
+    } else {
+      content = Text(
+        'Você completou o exercício!\nPorcentagem de acertos: ${_pontuacaoFinal.toInt()}%\n\nAcertos: $correctAnswers\nErros: $incorrectAnswers\n\nErros Detalhados:\n$wrongAnswersDetails',
+        textAlign: TextAlign.left,
+      );
+    }
+
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Fim do exercício'),
-          content: SingleChildScrollView(
-            child: Text(
-                'Você completou o exercício!\nPorcentagem de acertos: ${_pontuacaoFinal.toInt()}%\n\nAcertos: $correctAnswers\nErros: $incorrectAnswers\n\nErros Detalhados:\n$wrongAnswersDetails'),
-          ),
+          content: SingleChildScrollView(child: content),
           actions: [
             TextButton(
               onPressed: () {

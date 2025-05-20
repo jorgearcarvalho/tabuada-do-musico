@@ -364,24 +364,54 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
     await _atualizarEstatisticasNoJSON();
     await _carregarEstatisticas();
 
+    String titulo = 'Resultado';
+    Widget conteudo;
+
+    if (_pontuacaoFinal >= 50) {
+      int medalha = _entregarMedalha(_pontuacaoFinal);
+      Color corMedalha = _retornaMedalhaCor(medalha);
+
+      conteudo = Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.emoji_events, size: 60, color: corMedalha),
+          SizedBox(height: 16),
+          Text(
+            'Parabéns! Você recebeu uma medalha!',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 10),
+          Text(
+            'Pontuação: $acertos/$numQuestoes (${_pontuacaoFinal.toInt()}%)\nErros: $escalasErradas',
+            textAlign: TextAlign.center,
+          ),
+        ],
+      );
+    } else {
+      conteudo = Text(
+        'Exercício finalizado!\nPontuação: $acertos/$tentativas (${_pontuacaoFinal.toInt()}%)\nErros: $escalasErradas',
+        textAlign: TextAlign.center,
+      );
+    }
+
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (_) => AlertDialog(
-        title: Text('Resultado'),
-        content: SingleChildScrollView(
-            child: Text(
-                'Pontuação: $acertos/$tentativas (${_pontuacaoFinal.toInt()}%)\nErros: $escalasErradas')),
+        title: Text(titulo),
+        content: SingleChildScrollView(child: conteudo),
         actions: [
           TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                setState(() {
-                  _exercicioFinalizado = true;
-                  selecaoUsuario.clear();
-                });
-              },
-              child: const Text('Ok'))
+            onPressed: () {
+              Navigator.of(context).pop();
+              setState(() {
+                _exercicioFinalizado = true;
+                selecaoUsuario.clear();
+              });
+            },
+            child: const Text('Ok'),
+          )
         ],
       ),
     );

@@ -218,7 +218,7 @@ class _EscalasLivrePageState extends State<EscalasLivrePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Identifique as notas da escala: \n${escalaAtual['nome']}',
+                  'Notas presentes em \n${escalaAtual['nome']}',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),

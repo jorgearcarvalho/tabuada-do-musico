@@ -470,7 +470,7 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Notas presentes em ${escalaAtual['nome']}',
+                'Notas presentes em \n${escalaAtual['nome']}',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),

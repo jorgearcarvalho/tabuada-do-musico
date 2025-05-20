@@ -1,6 +1,6 @@
-Ao escolher um grupo de acordes para estudar, você terá 32 segundos para indicar as notas que compõem oito acordes sorteados de cada tipo.
+Escolha um grupo de acordes. Uma vez escolhido, você receberá 50 segundos para indicar as notas que compõem 10 acordes aleatórios.
 
-Para liberar o próximo exercício, você deverá atingir medalha de ouro no anterior.
+Para desbloquear o próximo exercício, você deverá atingir, ao menos, uma medalha de prata no anterior.
 
 Medalhas:
 50% = Bronze

@@ -1,8 +1,7 @@
-Escolha um intervalo para estudar.
+Escolha um intervalo. 
+Uma vez escolhido, você receberá 52 segundos para indicar qual nota, a partir de uma outra nota sorteada, representa o intervalo correspondente ao intervalo escolhido. Serao sorteadas 18 notas.
 
-Uma vez escolhido, você receberá 18 notas sorteadas e deverá, dentro de 36 segundos, indicar qual nota corresponde ao intervalo escolhido.
-
-Para liberar o próximo exercício, você deverá atingir medalha de ouro no anterior.
+Para desbloquear o próximo exercício, você deverá atingir, ao menos, uma medalha de prata no anterior.
 
 Medalhas:
 50% = Bronze

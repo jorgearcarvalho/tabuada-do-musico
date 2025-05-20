@@ -21,7 +21,7 @@ class AcordesDesafioPage extends StatefulWidget {
 class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
   late List<Map<String, dynamic>> exerciciosDisponiveis = [];
   bool mostrarTelaExercicio = false;
-  String exercicioAcordeTipoSelecionado = '';
+  String exercicioAcordeTipoAtualSelecionado = '';
   Map<String, dynamic> acordeAtual = {};
   List<String> selecaoUsuario = [];
   int acertos = 0;
@@ -132,9 +132,7 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
           'nome': key,
           'bloqueado': value['bloqueado'],
           'medalha': value['medalha'],
-          "tempo_atual": value['tempo_atual'],
           "melhor_tempo": value['melhor_tempo'],
-          "pontuacao_atual": value['pontuacao_atual'],
           "melhor_pontuacao": value['melhor_pontuacao'],
         });
       }
@@ -160,7 +158,7 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
     int medalhaObtida = _entregarMedalha(_pontuacaoFinal);
 
     final Map<String, dynamic> dadosExercicioAtual =
-        acordesData[exercicioAcordeTipoSelecionado];
+        acordesData[exercicioAcordeTipoAtualSelecionado];
 
     // Atualizando dados no JSON editavel
     // Atualiza melhor pontuação/tempo se for o caso
@@ -186,7 +184,7 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
             key != 'acidentes_possiveis')
         .toList();
 
-    int atualIndex = chaves.indexOf(exercicioAcordeTipoSelecionado);
+    int atualIndex = chaves.indexOf(exercicioAcordeTipoAtualSelecionado);
     if (atualIndex != -1 &&
         atualIndex < chaves.length - 1 &&
         medalhaObtida >= 2) {
@@ -223,7 +221,7 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
     return 0;
   }
 
-  double calcularProgressoGeral() {
+  double _calcularProgressoGeral() {
     if (exerciciosDisponiveis.isEmpty) return 0.0;
 
     double soma = 0;
@@ -249,7 +247,7 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
 
   void _selecionaExercicio(String tipo) {
     setState(() {
-      exercicioAcordeTipoSelecionado = tipo;
+      exercicioAcordeTipoAtualSelecionado = tipo;
       mostrarTelaExercicio = true;
       iniciarExercicio();
     });
@@ -312,7 +310,7 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
 
   void iniciarExercicio() {
     selecaoUsuario.clear();
-    acordesGerados = gerarAcordesFiltrados(exercicioAcordeTipoSelecionado);
+    acordesGerados = gerarAcordesFiltrados(exercicioAcordeTipoAtualSelecionado);
     acordeAtual = acordesGerados!.removeAt(0);
     iniciarTimer();
   }
@@ -450,14 +448,14 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
                     height: 8,
                     width: 150,
                     child: LinearProgressIndicator(
-                      value: calcularProgressoGeral(),
+                      value: _calcularProgressoGeral(),
                       minHeight: 8,
                       backgroundColor: Colors.grey[300],
                       color: Colors.blue,
                     )),
                 SizedBox(height: 5),
                 Text(
-                  'Progresso: ${(calcularProgressoGeral() * 100).toStringAsFixed(0)}%',
+                  'Progresso: ${(_calcularProgressoGeral() * 100).toStringAsFixed(0)}%',
                   style: const TextStyle(fontSize: 14),
                 ),
               ],
@@ -468,7 +466,8 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text('Desafio: $exercicioAcordeTipoSelecionado')),
+      appBar:
+          AppBar(title: Text('Desafio: $exercicioAcordeTipoAtualSelecionado')),
       body: LayoutBuilder(
         builder: (context, constraints) {
           double largura = constraints.maxWidth;

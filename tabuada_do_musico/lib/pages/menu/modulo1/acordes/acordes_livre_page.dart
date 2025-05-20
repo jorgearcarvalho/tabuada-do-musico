@@ -106,15 +106,14 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
 
     List<String> tonalidadesPossiveis = notasNaturais.keys.toList();
 
-    if (contadorAcordesSorteados >= 5 && contadorAcordesSorteados < 10) {
-      tonalidadesPossiveis = notasBemois.keys.toList();
-    } else if (contadorAcordesSorteados >= 10) {
-      tonalidadesPossiveis = notasSustenidas.keys.toList();
-    }
-
     List<String> tiposDeAcordes = Acorde.formulas.keys.toList();
 
     for (int i = 0; i < 10; i++) {
+      if (i > 3) {
+        tonalidadesPossiveis +=
+            notasBemois.keys.toList() + notasSustenidas.keys.toList();
+      }
+
       String fundamental =
           tonalidadesPossiveis[random.nextInt(tonalidadesPossiveis.length)];
       String tipo = tiposDeAcordes[random.nextInt(tiposDeAcordes.length)];

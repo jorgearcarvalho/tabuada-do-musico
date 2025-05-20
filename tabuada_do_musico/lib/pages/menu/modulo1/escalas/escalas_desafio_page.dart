@@ -6,6 +6,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:collection/collection.dart';
+import 'package:tcc_app/database/tonalidades/bemois.dart';
+import 'package:tcc_app/database/tonalidades/naturais.dart';
+import 'package:tcc_app/database/tonalidades/sustenidos.dart';
 import '../../../../models/escalas.dart';
 
 class EscalasDesafioPage extends StatefulWidget {
@@ -18,17 +21,23 @@ class EscalasDesafioPage extends StatefulWidget {
 class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
   late List<Map<String, dynamic>> exerciciosDisponiveis = [];
   bool mostrarTelaExercicio = false;
-  String tipoSelecionado = '';
+  String exercicioEscalaTipoAtualSelecionado = '';
   Map<String, dynamic> escalaAtual = {};
   List<String> selecaoUsuario = [];
   int acertos = 0;
   int tentativas = 0;
-  int numQuestoes = 8;
-  int tempoMaximo = 32;
+  int numQuestoes = 3;
+  int tempoMaximo = 60;
+  int _contadorTempo = 0;
   Timer? timer;
   String escalasErradas = '';
 
+  List<Map<String, dynamic>>? escalasGeradas = null;
+
+  double _pontuacaoFinal = 0;
+
   bool _tutorialFinalizado = false;
+  bool _exercicioFinalizado = false;
 
   List<String> notasPossiveis = [
     'Cbb',
@@ -72,40 +81,7 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
   void initState() {
     super.initState();
     _carregarEstatisticas();
-  }
-
-  Future<void> _carregarEstatisticas() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/TDM_estatisticas.json');
-
-    final String resposta = await file.readAsString();
-    final Map<String, dynamic> data = json.decode(resposta);
-
-    final bool mostrarTutorial =
-        data['estatisticas']['escalas']['mostrar_tutorial'];
-
-    final Map<String, dynamic> escalasStatsCru =
-        data['estatisticas']['escalas'];
-
-    final List<Map<String, dynamic>> escalasStats = [];
-
-    escalasStatsCru.forEach((key, value) {
-      if (value is Map<String, dynamic> && value.containsKey('bloqueado')) {
-        escalasStats.add({
-          'nome': key,
-          'bloqueado': value['bloqueado'],
-          'medalha': value['medalha'],
-          'tempo_atual': value['tempo_atual'],
-          'melhor_tempo': value['melhor_tempo'],
-          'pontuacao_atual': value['pontuacao_atual'],
-          'melhor_pontuacao': value['melhor_pontuacao'],
-        });
-      }
-    });
-
-    setState(() {
-      exerciciosDisponiveis = escalasStats;
-    });
+    _mostrarDialogoTutorial();
   }
 
   Future<void> _mostrarDialogoTutorial() async {
@@ -137,6 +113,94 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
     );
   }
 
+  Future<void> _carregarEstatisticas() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/TDM_estatisticas.json');
+
+    final String resposta = await file.readAsString();
+    final Map<String, dynamic> data = json.decode(resposta);
+
+    // final bool mostrarTutorial =
+    // data['estatisticas']['escalas']['mostrar_tutorial'];
+
+    final Map<String, dynamic> escalasStatsCru =
+        data['estatisticas']['escalas'];
+
+    final List<Map<String, dynamic>> escalasStats = [];
+
+    escalasStatsCru.forEach((key, value) {
+      if (value is Map<String, dynamic> && value.containsKey('bloqueado')) {
+        escalasStats.add({
+          'nome': key,
+          'bloqueado': value['bloqueado'],
+          'medalha': value['medalha'],
+          'melhor_tempo': value['melhor_tempo'],
+          'melhor_pontuacao': value['melhor_pontuacao'],
+        });
+      }
+    });
+
+    setState(() {
+      exerciciosDisponiveis = escalasStats;
+    });
+  }
+
+  Future<void> _atualizarEstatisticasNoJSON() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/TDM_estatisticas.json');
+
+    if (!await file.exists()) return;
+
+    final String content = await file.readAsString();
+    final Map<String, dynamic> data = json.decode(content);
+
+    final Map<String, dynamic> estatisticasDoExercicioEscalas =
+        data['estatisticas']['escalas'];
+
+    _pontuacaoFinal = (acertos / numQuestoes) * 100;
+    int medalhaObtida = _entregarMedalha(_pontuacaoFinal);
+
+    final Map<String, dynamic> dadosExercicioAtual =
+        estatisticasDoExercicioEscalas[exercicioEscalaTipoAtualSelecionado];
+
+    // Atualizando dados no JSON editavel
+    // Atualiza melhor pontuação/tempo se for o caso
+    if (_pontuacaoFinal > dadosExercicioAtual['melhor_pontuacao']) {
+      dadosExercicioAtual['melhor_pontuacao'] = _pontuacaoFinal.toInt();
+    }
+
+    if (_contadorTempo < dadosExercicioAtual['melhor_tempo'] ||
+        dadosExercicioAtual['melhor_tempo'] == 0) {
+      dadosExercicioAtual['melhor_tempo'] = _contadorTempo;
+    }
+
+    // Atualiza medalha se for melhor
+    if (medalhaObtida > dadosExercicioAtual['medalha']) {
+      dadosExercicioAtual['medalha'] = medalhaObtida;
+    }
+
+    // Desbloqueia o proximo exercicio, se houver
+    List<String> chaves = estatisticasDoExercicioEscalas.keys
+        .where((key) =>
+            key != 'mostrar_tutorial' &&
+            key != 'notas_possiveis' &&
+            key != 'acidentes_possiveis')
+        .toList();
+
+    int atualIndex = chaves.indexOf(exercicioEscalaTipoAtualSelecionado);
+    if (atualIndex != -1 &&
+        atualIndex < chaves.length - 1 &&
+        medalhaObtida >= 2) {
+      final proximoIntervalo = chaves[atualIndex + 1];
+      if (estatisticasDoExercicioEscalas[proximoIntervalo] != null) {
+        estatisticasDoExercicioEscalas[proximoIntervalo]['bloqueado'] = false;
+      }
+    }
+
+    // Escreve de volta o JSON atualizado
+    await file.writeAsString(JsonEncoder.withIndent('  ').convert(data));
+  }
+
   Color _retornaMedalhaCor(int medalha) {
     switch (medalha) {
       case 3:
@@ -150,41 +214,92 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
     }
   }
 
+  int _entregarMedalha(double _pontuacaoFinal) {
+    if (_pontuacaoFinal >= 50 && _pontuacaoFinal < 70) return 1;
+
+    if (_pontuacaoFinal >= 70 && _pontuacaoFinal < 90) return 2;
+
+    if (_pontuacaoFinal >= 90) return 3;
+
+    return 0;
+  }
+
+  double _calcularProgressoGeral() {
+    if (exerciciosDisponiveis.isEmpty) return 0.0;
+
+    double soma = 0;
+    for (var exercicio in exerciciosDisponiveis) {
+      int medalha = exercicio['medalha'] ?? 0;
+      switch (medalha) {
+        case 3:
+          soma += 100;
+          break;
+        case 2:
+          soma += 75;
+          break;
+        case 1:
+          soma += 50;
+          break;
+        default:
+          soma += 0;
+      }
+    }
+
+    return soma / exerciciosDisponiveis.length / 100; // valor entre 0.0 e 1.0
+  }
+
   void _selecionaExercicio(String tipo) {
     setState(() {
-      tipoSelecionado = tipo;
+      exercicioEscalaTipoAtualSelecionado = tipo;
       mostrarTelaExercicio = true;
-      iniciarNovoExercicio();
+      iniciarExercicio();
     });
   }
 
   List<Map<String, dynamic>> gerarEscalasFiltradas(String filtro) {
     List<List<String>> estruturasPermitidas = [];
 
-    if (filtro.contains("Maior")) estruturasPermitidas.add(Escala.escalaMaior);
-    if (filtro.contains("Harmônica"))
-      estruturasPermitidas.add(Escala.escalaMenorHarmonica);
-    if (filtro.contains("Melódica"))
-      estruturasPermitidas.add(Escala.escalaMenorMelodica);
-    if (estruturasPermitidas.isEmpty) {
-      estruturasPermitidas = [
-        Escala.escalaMaior,
-        Escala.escalaMenorHarmonica,
-        Escala.escalaMenorMelodica
-      ];
+    switch (filtro) {
+      case 'Maior':
+        estruturasPermitidas.add(Escala.escalaMaior);
+        break;
+      case 'Harmônica':
+        estruturasPermitidas.add(Escala.escalaMenorHarmonica);
+        break;
+      case 'Melódica':
+        estruturasPermitidas.add(Escala.escalaMenorMelodica);
+        break;
+      default:
+        estruturasPermitidas = [
+          Escala.escalaMaior,
+          Escala.escalaMenorHarmonica,
+          Escala.escalaMenorMelodica
+        ];
     }
 
-    List<String> tonalidades = notasPossiveis;
+    List<String> tonalidades = notasNaturais.keys.toList() +
+        notasBemois.keys.toList() +
+        notasSustenidas.keys.toList();
     List<Map<String, dynamic>> escalas = [];
+    Set<String> mapaDeEscalasSorteadasAEvitar = {};
     Random random = Random();
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 3; i++) {
       String tonica = tonalidades[random.nextInt(tonalidades.length)];
       List<String> estrutura =
           estruturasPermitidas[random.nextInt(estruturasPermitidas.length)];
+
+      // Evitando sortear escalas duplicadas
+      String chave = '$tonica $estrutura';
+      if (mapaDeEscalasSorteadasAEvitar.contains("$tonica $estrutura")) {
+        i--;
+        continue;
+      }
+      mapaDeEscalasSorteadasAEvitar.add(chave);
+
       Escala escala = Escala(tonica: tonica, estrutura: estrutura);
       escalas.add({
-        'nome': '${escala.nomeEscala} de $tonica',
+        'nome': '$tonica ${escala.nomeEscala}',
         'notas': escala.gerarNotas().values.toList(),
       });
     }
@@ -192,10 +307,16 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
     return escalas;
   }
 
-  void iniciarNovoExercicio() {
+  void iniciarExercicio() {
     selecaoUsuario.clear();
-    List<Map<String, dynamic>> escalas = gerarEscalasFiltradas(tipoSelecionado);
-    escalaAtual = escalas.first;
+    escalasGeradas = gerarEscalasFiltradas(exercicioEscalaTipoAtualSelecionado);
+    escalaAtual = escalasGeradas!.removeAt(0);
+    iniciarTimer();
+  }
+
+  void iniciarProximoExercicio() {
+    selecaoUsuario.clear();
+    escalaAtual = escalasGeradas!.removeAt(0);
     iniciarTimer();
   }
 
@@ -204,11 +325,12 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (tempoMaximo > 0) {
         setState(() {
+          _contadorTempo++;
           tempoMaximo--;
         });
       } else {
         timer.cancel();
-        mostrarResultado();
+        _finalizarExercicio();
       }
     });
   }
@@ -232,13 +354,16 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
       }
 
       if (tentativas < numQuestoes)
-        iniciarNovoExercicio();
+        iniciarProximoExercicio();
       else
         tempoMaximo = 0;
     });
   }
 
-  void mostrarResultado() {
+  Future<void> _finalizarExercicio() async {
+    await _atualizarEstatisticasNoJSON();
+    await _carregarEstatisticas();
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -246,7 +371,18 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
         title: Text('Resultado'),
         content: SingleChildScrollView(
             child: Text(
-                'Pontuação: $acertos/$tentativas\nErros: $escalasErradas')),
+                'Pontuação: $acertos/$tentativas (${_pontuacaoFinal.toInt()}%)\nErros: $escalasErradas')),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  _exercicioFinalizado = true;
+                  selecaoUsuario.clear();
+                });
+              },
+              child: const Text('Ok'))
+        ],
       ),
     );
   }
@@ -261,7 +397,7 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
   Widget build(BuildContext context) {
     if (!_tutorialFinalizado) {
       return Scaffold(
-        appBar: AppBar(title: Text('Formação de Acordes')),
+        appBar: AppBar(title: Text('Formação de Escalas')),
         body: Center(child: CircularProgressIndicator()),
       );
     }
@@ -299,56 +435,96 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
                   ),
                 );
               }).toList(),
-            )
+            ),
+            SizedBox(height: 20),
+            Container(
+                child: Column(
+              children: [
+                Container(
+                    height: 8,
+                    width: 150,
+                    child: LinearProgressIndicator(
+                      value: _calcularProgressoGeral(),
+                      minHeight: 8,
+                      backgroundColor: Colors.grey[300],
+                      color: Colors.blue,
+                    )),
+                SizedBox(height: 5),
+                Text(
+                  'Progresso: ${(_calcularProgressoGeral() * 100).toStringAsFixed(0)}%',
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ],
+            )),
           ],
         ),
       );
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text('Desafio: $tipoSelecionado')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Notas da escala: ${escalaAtual['nome']}',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Text('Tempo restante: $tempoMaximo segundos'),
-            SizedBox(height: 10),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: notasPossiveis.map((nota) {
-                final selecionada = selecaoUsuario.contains(nota);
-                return ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      if (selecionada) {
-                        selecaoUsuario.remove(nota);
-                      } else {
-                        selecaoUsuario.add(nota);
-                      }
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        selecionada ? Colors.green : Colors.blueAccent,
-                  ),
-                  child: Text(nota),
-                );
-              }).toList(),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: verificarResposta,
-              child: Text('Submeter'),
-            )
-          ],
-        ),
-      ),
+      appBar: AppBar(title: Text('Desafio: Escalas')),
+      body: LayoutBuilder(builder: (context, constraints) {
+        double largura = constraints.maxWidth;
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Notas presentes em ${escalaAtual['nome']}',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              Text('Tempo restante: $tempoMaximo segundos'),
+              SizedBox(height: 10),
+              Container(
+                  width: largura * 0.8,
+                  child: GridView.count(
+                    crossAxisCount: 5,
+                    shrinkWrap: true,
+                    mainAxisSpacing: 8,
+                    crossAxisSpacing: 8,
+                    childAspectRatio: 1,
+                    physics: NeverScrollableScrollPhysics(),
+                    children: notasPossiveis.map((nota) {
+                      final selecionada = selecaoUsuario.contains(nota);
+                      return ElevatedButton(
+                        onPressed: _exercicioFinalizado
+                            ? null
+                            : () {
+                                setState(() {
+                                  if (selecionada) {
+                                    selecaoUsuario.remove(nota);
+                                  } else {
+                                    selecaoUsuario.add(nota);
+                                  }
+                                });
+                              },
+                        style: ElevatedButton.styleFrom(
+                          shape: CircleBorder(),
+                          padding: EdgeInsets.all(20),
+                          backgroundColor: selecionada
+                              ? Colors.green
+                              : Color.fromARGB(255, 100, 185, 255),
+                        ),
+                        child: FittedBox(
+                          child: Text(
+                            nota,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  )),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _exercicioFinalizado ? null : verificarResposta,
+                child:
+                    Text(tentativas == numQuestoes ? 'Finalizar' : 'Submeter'),
+              )
+            ],
+          ),
+        );
+      }),
     );
   }
 }

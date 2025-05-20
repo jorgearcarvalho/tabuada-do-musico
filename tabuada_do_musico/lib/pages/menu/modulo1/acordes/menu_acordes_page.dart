@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tcc_app/pages/menu/modulo1/acordes/acordes_livre_page.dart';
+import 'package:tcc_app/pages/menu/modulo1/acordes/acordes_teoria_page.dart';
 import 'acordes_desafio_page.dart';
 
 class MenuAcordesPage extends StatelessWidget {
@@ -13,6 +14,14 @@ class MenuAcordesPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            ElevatedButton(
+              child: const Text('Teoria', style: TextStyle(fontSize: 20)),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => TeoriaAcordesPage()));
+              },
+            ),
+            const SizedBox(height: 30),
             ElevatedButton(
               child: const Text('Modo Livre', style: TextStyle(fontSize: 20)),
               onPressed: () {

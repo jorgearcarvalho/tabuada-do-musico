@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tcc_app/pages/menu/modulo1/escalas/escalas_desafio_page.dart';
 import 'package:tcc_app/pages/menu/modulo1/escalas/escalas_livre_page.dart';
+import 'package:tcc_app/pages/menu/modulo1/escalas/escalas_teoria_page.dart';
 
 class MenuEscalasPage extends StatelessWidget {
   const MenuEscalasPage({super.key});
@@ -13,6 +14,14 @@ class MenuEscalasPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => TeoriaEscalasPage()));
+              },
+              child: const Text('Teoria', style: TextStyle(fontSize: 20)),
+            ),
+            const SizedBox(height: 30),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(context,

@@ -26,8 +26,8 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
   List<String> selecaoUsuario = [];
   int acertos = 0;
   int tentativas = 0;
-  int numQuestoes = 3;
-  int tempoMaximo = 60;
+  int numQuestoes = 5;
+  int tempoMaximo = 100;
   int _contadorTempo = 0;
   Timer? timer;
   String escalasErradas = '';
@@ -277,14 +277,17 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
         ];
     }
 
-    List<String> tonalidades = notasNaturais.keys.toList() +
-        notasBemois.keys.toList() +
-        notasSustenidas.keys.toList();
+    List<String> tonalidades = notasNaturais.keys.toList();
+    // notasBemois.keys.toList() +
+    // notasSustenidas.keys.toList();
     List<Map<String, dynamic>> escalas = [];
     Set<String> mapaDeEscalasSorteadasAEvitar = {};
     Random random = Random();
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 5; i++) {
+      if (i == 3) tonalidades = notasBemois.keys.toList();
+      if (i == 4) tonalidades = notasSustenidas.keys.toList();
+
       String tonica = tonalidades[random.nextInt(tonalidades.length)];
       List<String> estrutura =
           estruturasPermitidas[random.nextInt(estruturasPermitidas.length)];
@@ -501,6 +504,7 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
             children: [
               Text(
                 'Notas presentes em \n${escalaAtual['nome']}',
+                textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),
@@ -545,6 +549,32 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
                       );
                     }).toList(),
                   )),
+              if (selecaoUsuario.isNotEmpty) ...[
+                SizedBox(height: 20),
+                Text(
+                  'Notas Selecionadas:',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 10),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: selecaoUsuario.map((nota) {
+                    return Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Text(
+                        nota,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _exercicioFinalizado ? null : verificarResposta,

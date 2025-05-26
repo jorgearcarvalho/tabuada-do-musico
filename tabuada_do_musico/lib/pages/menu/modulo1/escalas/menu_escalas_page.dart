@@ -14,6 +14,7 @@ class MenuEscalasPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Image.asset('assets/images/cientista_escalas.png'),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(context,

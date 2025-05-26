@@ -14,6 +14,7 @@ class MenuAcordesPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Image.asset('assets/images/engenheira_acordes.png'),
             ElevatedButton(
               child: const Text('Teoria', style: TextStyle(fontSize: 20)),
               onPressed: () {

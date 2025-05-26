@@ -14,6 +14,7 @@ class MenuIntervalosPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Image.asset('assets/images/intervalos_jones.png', height: 200),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(context,

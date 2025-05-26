@@ -245,8 +245,8 @@ class _EscalasLivrePageState extends State<EscalasLivrePage> {
               children: [
                 Text(
                   'Notas presentes em \n${escalaAtual['nome']}',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 10),
                 Text('Tempo restante: $tempoRestante segundos'),

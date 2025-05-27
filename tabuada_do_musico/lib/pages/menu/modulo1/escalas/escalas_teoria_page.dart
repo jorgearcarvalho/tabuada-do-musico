@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tcc_app/widgets/caixinha_texto.dart'; // ajuste o caminho conforme necessário
 
 class TeoriaEscalasPage extends StatelessWidget {
   const TeoriaEscalasPage({super.key});
@@ -10,58 +11,40 @@ class TeoriaEscalasPage extends StatelessWidget {
         title: const Text('Teoria: Escalas'),
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 20),
         child: ListView(
-          children: [
-            // const SizedBox(height: 20),
-            const Text(
-              'O que é uma Escala?',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          children: const [
+            CaixinhaTexto(
+              title: 'O que é uma Escala?',
+              description:
+                  'Escalas são conjuntos de notas organizadas em uma ordem específica de tons e semitons. Elas são fundamentais para entender a tonalidade de uma música.',
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'Escalas são conjuntos de notas organizadas em uma ordem específica de tons e semitons. Elas são fundamentais para entender a tonalidade de uma música.',
-              textAlign: TextAlign.justify,
+            SizedBox(height: 16),
+            CaixinhaTexto(
+              title: 'Escala Maior',
+              description:
+                  'A fórmula da escala maior é: tom - tom - semitom - tom - tom - tom - semitom. Exemplo em C (Dó maior): \nC - D - E - F - G - A - B - C',
             ),
-            const SizedBox(height: 16),
-            const Text(
-              'Escala Maior',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            SizedBox(height: 16),
+            CaixinhaTexto(
+              title: 'Escala Menor Harmônica',
+              description:
+                  'Fórmula: tom - semitom - tom - tom - semitom - 1 tom e meio - semitom. Exemplo em A (Lá menor harmônica):\nA - B - C - D - E - F - G# - A',
             ),
-            const Text(
-              'A fórmula da escala maior é: tom - tom - semitom - tom - tom - tom - semitom. Exemplo em C (Dó maior): \nC - D - E - F - G - A - B - C',
-              textAlign: TextAlign.justify,
+            SizedBox(height: 16),
+            CaixinhaTexto(
+              title: 'Escala Menor Melódica',
+              description:
+                  'Fórmula: tom - semitom - tom - tom - tom - tom - semitom (na subida). Exemplo em A: \nA - B - C - D - E - F# - G# - A',
             ),
-            const SizedBox(height: 16),
-            const Text(
-              'Escala Menor Harmônica',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            SizedBox(height: 16),
+            CaixinhaTexto(
+              title: 'Dica!',
+              description:
+                  '- Lembre-se de aplicar a fórmula da escala ao escolher as notas.\n'
+                  '- Sempre comece pela tônica (a nota base da escala).\n'
+                  '- Use sustenidos (#) ou bemóis (b) de acordo com a tonalidade sorteada.',
             ),
-            const Text(
-              'Fórmula: tom - semitom - tom - tom - semitom - 1 tom e meio - semitom.Exemplo em A (Lá menor harmônica):\nA - B - C - D - E - F - G# - A',
-              textAlign: TextAlign.justify,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Escala Menor Melódica',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const Text(
-              'Fórmula: tom - semitom - tom - tom - tom - tom - semitom (na subida). Exemplo em A: \nA - B - C - D - E - F# - G# - A',
-              textAlign: TextAlign.justify,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Dica!',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const Text(
-              '- Lembre-se de aplicar a fórmula da escala ao escolher as notas.\n'
-              '- Sempre comece pela tônica (a nota base da escala).\n'
-              '- Use sustenidos (#) ou bemóis (b) de acordo com a tonalidade sorteada.',
-              textAlign: TextAlign.justify,
-            ),
-            const SizedBox(height: 20),
           ],
         ),
       ),

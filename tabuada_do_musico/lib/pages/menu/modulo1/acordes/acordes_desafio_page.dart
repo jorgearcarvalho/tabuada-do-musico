@@ -27,7 +27,7 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
   int acertos = 0;
   int tentativas = 0;
   int numQuestoes = 10;
-  int tempoMaximo = 50;
+  int tempoMaximo = 60;
   int _contadorTempo = 0;
   Timer? timer;
   String acordesErrados = '';
@@ -438,7 +438,7 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
 
     if (!mostrarTelaExercicio) {
       return Scaffold(
-        appBar: AppBar(title: Text('Desafio: Formação de Acordes')),
+        appBar: AppBar(title: Text('Formação de Acordes')),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -497,7 +497,7 @@ class _AcordesDesafioPageState extends State<AcordesDesafioPage> {
 
     return Scaffold(
       appBar:
-          AppBar(title: Text('Desafio: $exercicioAcordeTipoAtualSelecionado')),
+          AppBar(title: Text('Acordes $exercicioAcordeTipoAtualSelecionado')),
       body: LayoutBuilder(
         builder: (context, constraints) {
           double largura = constraints.maxWidth;

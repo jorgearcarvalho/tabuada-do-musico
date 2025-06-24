@@ -22,7 +22,7 @@ class _EscalasLivrePageState extends State<EscalasLivrePage> {
   int acertos = 0;
   int tentativas = 0;
   Timer? timer;
-  int tempoRestante = 30;
+  int tempoRestante = 15;
   String escalasErradas = '';
 
   List<String> notasPossiveis = [
@@ -140,7 +140,7 @@ class _EscalasLivrePageState extends State<EscalasLivrePage> {
 
   void iniciarTimer() {
     timer?.cancel();
-    tempoRestante = 30;
+    tempoRestante = 15;
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (tempoRestante > 0) {
         setState(() {
@@ -189,7 +189,12 @@ class _EscalasLivrePageState extends State<EscalasLivrePage> {
       iniciarNovoExercicio();
     } else {
       alertaSubmeterResposta('Errou!');
-      escalasErradas += escalaAtual['nome'] + ' | ';
+      if (escalasErradas == '') {
+        escalasErradas = escalaAtual['nome'];
+      } else {
+        if (!escalasErradas.contains(escalaAtual['nome']))
+          escalasErradas += ' | ' + escalaAtual['nome'];
+      }
     }
   }
 
@@ -208,9 +213,10 @@ class _EscalasLivrePageState extends State<EscalasLivrePage> {
             onPressed: () {
               Navigator.pop(context);
               iniciarNovoExercicio();
+              escalasErradas = '';
               acertos = 0;
               tentativas = 0;
-              tempoRestante = 30;
+              tempoRestante = 15;
             },
             child: Text('Tentar novamente'),
           ),
@@ -229,12 +235,12 @@ class _EscalasLivrePageState extends State<EscalasLivrePage> {
   Widget build(BuildContext context) {
     if (!_tutorialFinalizado) {
       return Scaffold(
-        appBar: AppBar(title: Text('Exercício de Escalas')),
+        appBar: AppBar(title: Text('Formação de Escalas')),
         body: Center(child: CircularProgressIndicator()),
       );
     }
     return Scaffold(
-      appBar: AppBar(title: Text('Exercício de Escalas')),
+      appBar: AppBar(title: Text('Formação de Escalas')),
       body: LayoutBuilder(
         builder: (context, constraints) {
           double larguraDisponivel = constraints.maxWidth;

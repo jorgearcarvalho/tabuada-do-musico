@@ -44,7 +44,7 @@ class _MenuPages extends State<MenuPages> {
           const SizedBox(height: 30),
           ElevatedButton(
             onPressed: () => Navigator.pushNamed(context, '/creditos'),
-            child: const Text('Creditos', style: TextStyle(fontSize: 20)),
+            child: const Text('Créditos', style: TextStyle(fontSize: 20)),
           )
         ],
       ),
@@ -75,7 +75,7 @@ class _MenuPages extends State<MenuPages> {
           const SizedBox(height: 60),
           ElevatedButton(
             onPressed: _ativaModulo1, // Return to main menu
-            child: const Text('menu inicial', style: TextStyle(fontSize: 20)),
+            child: const Text('Menu Inicial', style: TextStyle(fontSize: 20)),
           ),
         ],
       );

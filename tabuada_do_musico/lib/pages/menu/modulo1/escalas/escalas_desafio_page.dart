@@ -27,7 +27,7 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
   int acertos = 0;
   int tentativas = 0;
   int numQuestoes = 5;
-  int tempoMaximo = 100;
+  int tempoMaximo = 75;
   int _contadorTempo = 0;
   Timer? timer;
   String escalasErradas = '';
@@ -263,10 +263,10 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
       case 'Maior':
         estruturasPermitidas.add(Escala.escalaMaior);
         break;
-      case 'Harmônica':
+      case 'menor harmonica':
         estruturasPermitidas.add(Escala.escalaMenorHarmonica);
         break;
-      case 'Melódica':
+      case 'menor melodica':
         estruturasPermitidas.add(Escala.escalaMenorMelodica);
         break;
       default:
@@ -437,7 +437,7 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
 
     if (!mostrarTelaExercicio) {
       return Scaffold(
-        appBar: AppBar(title: Text('Desafio: Formação de Escalas')),
+        appBar: AppBar(title: Text('Formação de Escalas')),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -495,7 +495,8 @@ class _EscalasDesafioPageState extends State<EscalasDesafioPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text('Desafio: Escalas')),
+      appBar:
+          AppBar(title: Text('Escala $exercicioEscalaTipoAtualSelecionado')),
       body: LayoutBuilder(builder: (context, constraints) {
         double largura = constraints.maxWidth;
         return Center(

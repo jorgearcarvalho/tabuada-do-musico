@@ -385,7 +385,7 @@ class _IntervalosDesafioPageState extends State<IntervalosDesafioPage> {
   Widget build(BuildContext context) {
     if (!_tutorialFinalizado) {
       return Scaffold(
-        appBar: AppBar(title: Text('Formação de Acordes')),
+        appBar: AppBar(title: Text('Praticando Intervalos')),
         body: Center(child: CircularProgressIndicator()),
       );
     }

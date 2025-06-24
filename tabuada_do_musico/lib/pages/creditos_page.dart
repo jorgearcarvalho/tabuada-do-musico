@@ -8,7 +8,7 @@ class CreditosPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Creditos'),
+          title: const Text('Créditos'),
         ),
         body: Container(
           padding: EdgeInsets.symmetric(horizontal: 28.0, vertical: 32.0),

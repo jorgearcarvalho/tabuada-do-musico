@@ -8,7 +8,7 @@ class TeoriaEscalasPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Teoria: Escalas'),
+        title: const Text('Estudando Escalas'),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 20),

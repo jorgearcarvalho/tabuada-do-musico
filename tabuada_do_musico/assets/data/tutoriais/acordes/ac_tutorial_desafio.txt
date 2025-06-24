@@ -1,4 +1,4 @@
-Escolha um grupo de acordes. Uma vez escolhido, você receberá 50 segundos para indicar as notas que compõem 10 acordes aleatórios.
+Escolha um grupo de acordes. Uma vez escolhido, você receberá 60 segundos para indicar as notas que compõem 10 acordes aleatórios.
 
 Para desbloquear o próximo exercício, você deverá atingir, ao menos, uma medalha de prata no anterior.
 

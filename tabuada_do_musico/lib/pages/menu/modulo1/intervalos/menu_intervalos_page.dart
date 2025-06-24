@@ -7,56 +7,81 @@ import 'intervalos_desafio_page.dart';
 class MenuIntervalosPage extends StatelessWidget {
   const MenuIntervalosPage({super.key});
 
+  Future<void> _preloadAssets(BuildContext context) async {
+    await precacheImage(
+      const AssetImage('assets/images/intervalos_jones.png'),
+      context,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Estudando Intervalos')),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Vamos mapear intervalos?',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                textAlign: TextAlign.center,
+    return FutureBuilder(
+      future: _preloadAssets(context),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        return Scaffold(
+          appBar: AppBar(title: const Text('Estudando Intervalos')),
+          body: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Vamos mapear intervalos?',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 10),
+                  const BonequinhoTematico(
+                    imagePath: 'assets/images/intervalos_jones.png',
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => TeoriaIntervalosPage()),
+                      );
+                    },
+                    child: const Text('Teoria', style: TextStyle(fontSize: 20)),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => IntervalosLivrePage()),
+                      );
+                    },
+                    child: const Text('Modo Livre',
+                        style: TextStyle(fontSize: 20)),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => IntervalosDesafioPage()),
+                      );
+                    },
+                    child: const Text('Modo Desafio',
+                        style: TextStyle(fontSize: 20)),
+                  ),
+                ],
               ),
-              const SizedBox(height: 10),
-              const BonequinhoTematico(
-                  imagePath: 'assets/images/intervalos_jones.png'),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => TeoriaIntervalosPage()));
-                },
-                child: const Text('Teoria', style: TextStyle(fontSize: 20)),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => IntervalosLivrePage()));
-                },
-                child: const Text('Modo Livre', style: TextStyle(fontSize: 20)),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => IntervalosDesafioPage()));
-                },
-                child:
-                    const Text('Modo Desafio', style: TextStyle(fontSize: 20)),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

@@ -23,7 +23,7 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
   int acertos = 0;
   int tentativas = 0;
   Timer? timer;
-  int tempoRestante = 30;
+  int tempoRestante = 10;
   String acordesErrados = '';
   List<String> notasPossiveis = [
     'Cbb',
@@ -142,7 +142,7 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
 
   void iniciarTimer() {
     timer?.cancel();
-    tempoRestante = 30;
+    tempoRestante = 10;
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if (tempoRestante > 0) {
         setState(() {
@@ -220,7 +220,7 @@ class _AcordesLivrePageState extends State<AcordesLivrePage> {
               iniciarNovoExercicio();
               acertos = 0;
               tentativas = 0;
-              tempoRestante = 30;
+              tempoRestante = 10;
             },
             child: Text('Tentar novamente'),
           ),

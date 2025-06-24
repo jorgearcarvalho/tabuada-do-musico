@@ -7,49 +7,76 @@ import 'acordes_desafio_page.dart';
 class MenuAcordesPage extends StatelessWidget {
   const MenuAcordesPage({super.key});
 
+  Future<void> _preloadAssets(BuildContext context) async {
+    await precacheImage(
+      const AssetImage('assets/images/engenheira_acordes.png'),
+      context,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Estudando Acordes')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Vamos constuir acordes?',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-              textAlign: TextAlign.center,
+    return FutureBuilder(
+      future: _preloadAssets(context),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        return Scaffold(
+          appBar: AppBar(title: const Text('Estudando Acordes')),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Vamos constuir acordes?',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 10),
+                const BonequinhoTematico(
+                  imagePath: 'assets/images/engenheira_acordes.png',
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  child: const Text('Teoria', style: TextStyle(fontSize: 20)),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => TeoriaAcordesPage()),
+                    );
+                  },
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  child:
+                      const Text('Modo Livre', style: TextStyle(fontSize: 20)),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => AcordesLivrePage()),
+                    );
+                  },
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  child: const Text('Modo Desafio',
+                      style: TextStyle(fontSize: 20)),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => AcordesDesafioPage()),
+                    );
+                  },
+                ),
+              ],
             ),
-            const SizedBox(height: 10),
-            const BonequinhoTematico(
-                imagePath: 'assets/images/engenheira_acordes.png'),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              child: const Text('Teoria', style: TextStyle(fontSize: 20)),
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => TeoriaAcordesPage()));
-              },
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              child: const Text('Modo Livre', style: TextStyle(fontSize: 20)),
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => AcordesLivrePage()));
-              },
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              child: const Text('Modo Desafio', style: TextStyle(fontSize: 20)),
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => AcordesDesafioPage()));
-              },
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
